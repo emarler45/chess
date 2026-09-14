@@ -63,10 +63,6 @@ public class ChessMove {
 
     @Override
     public String toString() {
-        return "ChessMove{" +
-                "startPos=" + startPos +
-                ", endPos=" + endPos +
-                ", promotionPiece=" + promotionPiece +
-                '}';
+        return String.format("From %s to %s", startPos, endPos);
     }
 }
