@@ -1,6 +1,7 @@
 package chess;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -13,6 +14,7 @@ public class ChessPiece {
 
     private final ChessGame.TeamColor color;
     private final ChessPiece.PieceType type;
+    private List<ChessMove> moves;
 
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
         this.color = pieceColor;
@@ -53,7 +55,7 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        throw new RuntimeException("Not implemented");
+        return List.of();
     }
 
     @Override
@@ -67,5 +69,13 @@ public class ChessPiece {
     @Override
     public int hashCode() {
         return 31* Objects.hashCode(type) + 37*Objects.hashCode(color);
+    }
+
+    @Override
+    public String toString() {
+        return "ChessPiece{" +
+                "type=" + type +
+                ", color=" + color +
+                '}';
     }
 }
