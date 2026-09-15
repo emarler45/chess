@@ -1,7 +1,7 @@
 package chess;
 
 import java.util.Collection;
-import java.util.List;
+import java.util.ArrayList;
 import java.util.Objects;
 
 /**
@@ -14,7 +14,7 @@ public class ChessPiece {
 
     private final ChessGame.TeamColor color;
     private final ChessPiece.PieceType type;
-    private List<ChessMove> moves;
+    private ArrayList<ChessMove> moves;
 
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
         this.color = pieceColor;
@@ -56,13 +56,27 @@ public class ChessPiece {
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         ChessPiece pieceToMove = board.getPiece(myPosition);
+        int startRow = myPosition.getRow();
+        int startCol = myPosition.getColumn();
+        ArrayList<ChessMove> movesToReturn = new ArrayList<>();
         return switch (pieceToMove.type) {
-            case PieceType.BISHOP -> List.of();
-            case PieceType.KING -> List.of();
-            case PieceType.ROOK -> List.of();
-            case PieceType.QUEEN -> List.of();
-            case PieceType.KNIGHT -> List.of();
-            default -> List.of();
+            case PieceType.BISHOP -> null;
+            case PieceType.KING -> null;
+            case PieceType.ROOK -> {
+                for (int i = -7; i < 7; i++) {
+                    int moveToRow = startRow + i;
+                    if (1 <= moveToRow && moveToRow <= 8 && i != 0) {
+                        movesToReturn.add(new ChessMove(myPosition, new ChessPosition(moveToRow, startCol), null));
+                    }
+                    int moveToCol = startCol + i;
+                    if (1 <= moveToCol && moveToCol <= 8 && i != 0) {
+                        movesToReturn.add(new ChessMove(myPosition, new ChessPosition(startRow, moveToCol), null));
+                    }
+                }
+            yield movesToReturn; }
+            case PieceType.QUEEN -> null;
+            case PieceType.KNIGHT -> null;
+            default -> null;
         };
     }
 
