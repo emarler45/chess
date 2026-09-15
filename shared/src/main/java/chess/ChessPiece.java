@@ -55,7 +55,15 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        return List.of();
+        ChessPiece pieceToMove = board.getPiece(myPosition);
+        return switch (pieceToMove.type) {
+            case PieceType.BISHOP -> List.of();
+            case PieceType.KING -> List.of();
+            case PieceType.ROOK -> List.of();
+            case PieceType.QUEEN -> List.of();
+            case PieceType.KNIGHT -> List.of();
+            default -> List.of();
+        };
     }
 
     @Override
