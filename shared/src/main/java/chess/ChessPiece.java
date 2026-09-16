@@ -82,15 +82,17 @@ public class ChessPiece {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
         ChessPiece that = (ChessPiece) o;
-        return (getPieceType() == that.getPieceType() &&  getTeamColor() == ((ChessPiece) o).getTeamColor());
+        return color == that.color && type == that.type && Objects.equals(moves, that.moves);
     }
 
     @Override
     public int hashCode() {
-        return 31* Objects.hashCode(type) + 37*Objects.hashCode(color);
+        return Objects.hash(color, type, moves);
     }
 
     @Override

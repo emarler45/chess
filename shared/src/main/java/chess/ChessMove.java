@@ -47,20 +47,24 @@ public class ChessMove {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        ChessMove that = (ChessMove) o;
-        return (getStartPosition() == that.getStartPosition() &&
-                getEndPosition() == that.getEndPosition());
+        if (o == null || getClass() != o.getClass()) {
+            return false;
+        }
+        ChessMove chessMove = (ChessMove) o;
+        return Objects.equals(startPos, chessMove.startPos) && Objects.equals(endPos, chessMove.endPos) && promotionPiece == chessMove.promotionPiece;
     }
 
     @Override
     public int hashCode() {
-        return 31*Objects.hashCode(startPos) + 37*Objects.hashCode(endPos) + 31*Objects.hashCode(promotionPiece);
+        return Objects.hash(startPos, endPos, promotionPiece);
     }
 
     @Override
     public String toString() {
-        return String.format("From %s to %s", startPos, endPos).concat((promotionPiece != null) ? promotionPiece.toString() : "none");
+        return "ChessMove{" +
+                "startPos=" + startPos +
+                ", endPos=" + endPos +
+                ", promotionPiece=" + promotionPiece +
+                '}';
     }
 }
