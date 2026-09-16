@@ -80,11 +80,11 @@ public class ChessPiece {
             case PieceType.ROOK -> {
                 for (int i = -7; i < 7; i++) {
                     int moveToRow = startRow + i;
-                    if (1 <= moveToRow && moveToRow <= 8 && i != 0) {
+                    if (1 <= moveToRow && moveToRow <= 8) {
                         movesToReturn.add(new ChessMove(myPosition, new ChessPosition(moveToRow, startCol), null));
                     }
                     int moveToCol = startCol + i;
-                    if (1 <= moveToCol && moveToCol <= 8 && i != 0) {
+                    if (1 <= moveToCol && moveToCol <= 8) {
                         movesToReturn.add(new ChessMove(myPosition, new ChessPosition(startRow, moveToCol), null));
                     }
                 }
