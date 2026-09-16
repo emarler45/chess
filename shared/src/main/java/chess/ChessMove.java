@@ -51,9 +51,7 @@ public class ChessMove {
         if (o == null || getClass() != o.getClass()) return false;
         ChessMove that = (ChessMove) o;
         return (getStartPosition() == that.getStartPosition() &&
-                getEndPosition() == that.getEndPosition()
-                );
-
+                getEndPosition() == that.getEndPosition());
     }
 
     @Override
@@ -63,6 +61,6 @@ public class ChessMove {
 
     @Override
     public String toString() {
-        return String.format("From %s to %s", startPos, endPos);
+        return String.format("From %s to %s", startPos, endPos).concat((promotionPiece != null) ? promotionPiece.toString() : "none");
     }
 }
