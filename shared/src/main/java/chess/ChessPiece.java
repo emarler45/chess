@@ -60,8 +60,23 @@ public class ChessPiece {
         int startCol = myPosition.getColumn();
         ArrayList<ChessMove> movesToReturn = new ArrayList<>();
         return switch (pieceToMove.type) {
-            case PieceType.BISHOP -> null;
-            case PieceType.KING -> null;
+            case PieceType.KING -> {
+                for (int i = -1; i <= 1; i++) {
+                    int endRow = i+startRow;
+                    if (endRow < 8 && endRow > 1) {
+                        for (int j = -1; j <= 1; j++) {
+                            int endCol = j+startCol;
+                            if (endCol < 8 && endCol > 1) {
+                                ChessPiece destinationPiece = board.getPiece(new ChessPosition(endRow, endCol));
+                                if (destinationPiece == null || destinationPiece.getTeamColor() != getTeamColor()){
+                                    movesToReturn.add(new ChessMove(myPosition, new ChessPosition(startRow + i, startCol + j), null));
+                                }
+                            }
+                        }
+                    }
+                }
+            yield movesToReturn;}
+            case PieceType.PAWN -> null;
             case PieceType.ROOK -> {
                 for (int i = -7; i < 7; i++) {
                     int moveToRow = startRow + i;
@@ -73,10 +88,10 @@ public class ChessPiece {
                         movesToReturn.add(new ChessMove(myPosition, new ChessPosition(startRow, moveToCol), null));
                     }
                 }
-            yield movesToReturn; }
-            case PieceType.QUEEN -> null;
+                yield movesToReturn; }
             case PieceType.KNIGHT -> null;
-            default -> null;
+            case PieceType.BISHOP -> null;
+            case PieceType.QUEEN -> null;
         };
     }
 
