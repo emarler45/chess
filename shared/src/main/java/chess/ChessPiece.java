@@ -1,5 +1,6 @@
 package chess;
 
+import java.lang.reflect.Array;
 import java.util.Collection;
 import java.util.ArrayList;
 import java.util.Objects;
@@ -48,6 +49,82 @@ public class ChessPiece {
     }
 
 
+    private ArrayList<ChessMove> kingFunction(int startRow, int startCol, ChessBoard board, ChessPosition myPosition) {
+        ArrayList<ChessMove> movesToReturn = new ArrayList<>();
+        for (int i = -1; i <= 1; i++) {
+            int endRow = i+startRow;
+            if (endRow < 8 && endRow > 1) {
+                for (int j = -1; j <= 1; j++) {
+                    int endCol = j+startCol;
+                    if (endCol < 8 && endCol > 1) {
+                        ChessPiece destinationPiece = board.getPiece(new ChessPosition(endRow, endCol));
+                        if (destinationPiece == null || destinationPiece.getTeamColor() != getTeamColor()){
+                            movesToReturn.add(new ChessMove(myPosition, new ChessPosition(startRow + i, startCol + j), null));
+                        }
+                    }
+                }
+            }
+        }
+        return movesToReturn;
+    }
+
+    private ArrayList<ChessMove> pawnFunction(int pawnStep, int startRow, int startCol, ChessBoard board, ChessPosition myPosition){
+        ArrayList<ChessMove> movesToReturn = new ArrayList<>();
+        // if piece is white it needs to move down, else move up
+
+        int targetRow = pawnStep + startRow;
+        ChessPiece targetPiece = board.getPiece(new ChessPosition(targetRow, startCol));
+        if (targetPiece == null) {
+            if (targetRow == 1 || targetRow == 8){
+                movesToReturn.add(new ChessMove(myPosition, new ChessPosition(targetRow, startCol), PieceType.BISHOP));
+                movesToReturn.add(new ChessMove(myPosition, new ChessPosition(targetRow, startCol), PieceType.ROOK));
+                movesToReturn.add(new ChessMove(myPosition, new ChessPosition(targetRow, startCol), PieceType.KNIGHT));
+                movesToReturn.add(new ChessMove(myPosition, new ChessPosition(targetRow, startCol), PieceType.QUEEN));
+            }
+            else {
+                movesToReturn.add(new ChessMove(myPosition, new ChessPosition(targetRow, startCol), null));
+            }
+            int advRow = (pawnStep == 1) ? 2 : 7;
+            if (startRow == advRow && board.getPiece(new ChessPosition(targetRow + pawnStep, startCol)) == null) {
+                movesToReturn.add(new ChessMove(myPosition, new ChessPosition(targetRow+pawnStep, startCol), null));
+            }
+        }
+        if (startCol != 1) {
+            ChessPiece toAttack = board.getPiece(new ChessPosition(targetRow, startCol - 1));
+            if (toAttack != null && toAttack.getTeamColor() != getTeamColor()) {
+                if (targetRow == 1 || targetRow == 8){
+                    movesToReturn.add(new ChessMove(myPosition, new ChessPosition(targetRow, startCol-1), PieceType.BISHOP));
+                    movesToReturn.add(new ChessMove(myPosition, new ChessPosition(targetRow, startCol-1), PieceType.ROOK));
+                    movesToReturn.add(new ChessMove(myPosition, new ChessPosition(targetRow, startCol-1), PieceType.KNIGHT));
+                    movesToReturn.add(new ChessMove(myPosition, new ChessPosition(targetRow, startCol-1), PieceType.QUEEN));
+                }
+                else {
+                    movesToReturn.add(new ChessMove(myPosition, new ChessPosition(targetRow, startCol - 1), null));
+                }
+            }
+        }
+        if (startCol != 8) {
+            ChessPiece toAttack = board.getPiece(new ChessPosition(targetRow, startCol + 1));
+            if (toAttack != null && toAttack.getTeamColor() != getTeamColor()) {
+                if (targetRow == 1 || targetRow == 8){
+                    movesToReturn.add(new ChessMove(myPosition, new ChessPosition(targetRow, startCol+1), PieceType.BISHOP));
+                    movesToReturn.add(new ChessMove(myPosition, new ChessPosition(targetRow, startCol+1), PieceType.ROOK));
+                    movesToReturn.add(new ChessMove(myPosition, new ChessPosition(targetRow, startCol+1), PieceType.KNIGHT));
+                    movesToReturn.add(new ChessMove(myPosition, new ChessPosition(targetRow, startCol+1), PieceType.QUEEN));
+                }
+                else {
+                    movesToReturn.add(new ChessMove(myPosition, new ChessPosition(targetRow, startCol + 1), null));
+                }
+            }
+        }
+//                TODO if needed En Passant
+//                int enPassantRow = (pawnStep == 1) ? 5 : 4;
+//                if (startRow == enPassantRow){
+//                    if (startCol != 1) {
+//                    }
+//                }
+    return movesToReturn; }
+
     /**
      * Calculates all the positions a chess piece can move to
      * Does not take into account moves that are illegal due to leaving the king in
@@ -60,78 +137,14 @@ public class ChessPiece {
         int startRow = myPosition.getRow();
         int startCol = myPosition.getColumn();
         ArrayList<ChessMove> movesToReturn = new ArrayList<>();
-        return switch (pieceToMove.type) {
+        switch (pieceToMove.type) {
             case PieceType.KING -> {
-                for (int i = -1; i <= 1; i++) {
-                    int endRow = i+startRow;
-                    if (endRow < 8 && endRow > 1) {
-                        for (int j = -1; j <= 1; j++) {
-                            int endCol = j+startCol;
-                            if (endCol < 8 && endCol > 1) {
-                                ChessPiece destinationPiece = board.getPiece(new ChessPosition(endRow, endCol));
-                                if (destinationPiece == null || destinationPiece.getTeamColor() != getTeamColor()){
-                                    movesToReturn.add(new ChessMove(myPosition, new ChessPosition(startRow + i, startCol + j), null));
-                                }
-                            }
-                        }
-                    }
-                }
-            yield movesToReturn;}
+                movesToReturn = kingFunction(startRow, startCol, board, myPosition);
+            }
             case PieceType.PAWN -> {
-                // if piece is white it needs to move down, else move up
                 int pawnStep = (pieceToMove.getTeamColor() == ChessGame.TeamColor.WHITE) ? 1 : -1;
-                int targetRow = pawnStep + startRow;
-                ChessPiece targetPiece = board.getPiece(new ChessPosition(targetRow, startCol));
-                if (targetPiece == null) {
-                    if (targetRow == 1 || targetRow == 8){
-                        movesToReturn.add(new ChessMove(myPosition, new ChessPosition(targetRow, startCol), PieceType.BISHOP));
-                        movesToReturn.add(new ChessMove(myPosition, new ChessPosition(targetRow, startCol), PieceType.ROOK));
-                        movesToReturn.add(new ChessMove(myPosition, new ChessPosition(targetRow, startCol), PieceType.KNIGHT));
-                        movesToReturn.add(new ChessMove(myPosition, new ChessPosition(targetRow, startCol), PieceType.QUEEN));
-                    }
-                    else {
-                        movesToReturn.add(new ChessMove(myPosition, new ChessPosition(targetRow, startCol), null));
-                    }
-                    int advRow = (pawnStep == 1) ? 2 : 7;
-                    if (startRow == advRow && board.getPiece(new ChessPosition(targetRow + pawnStep, startCol)) == null) {
-                        movesToReturn.add(new ChessMove(myPosition, new ChessPosition(targetRow+pawnStep, startCol), null));
-                    }
+                movesToReturn = pawnFunction(pawnStep, startRow, startCol, board, myPosition);
                 }
-                if (startCol != 1) {
-                    ChessPiece toAttack = board.getPiece(new ChessPosition(targetRow, startCol - 1));
-                    if (toAttack != null && toAttack.getTeamColor() != getTeamColor()) {
-                        if (targetRow == 1 || targetRow == 8){
-                            movesToReturn.add(new ChessMove(myPosition, new ChessPosition(targetRow, startCol-1), PieceType.BISHOP));
-                            movesToReturn.add(new ChessMove(myPosition, new ChessPosition(targetRow, startCol-1), PieceType.ROOK));
-                            movesToReturn.add(new ChessMove(myPosition, new ChessPosition(targetRow, startCol-1), PieceType.KNIGHT));
-                            movesToReturn.add(new ChessMove(myPosition, new ChessPosition(targetRow, startCol-1), PieceType.QUEEN));
-                        }
-                        else {
-                            movesToReturn.add(new ChessMove(myPosition, new ChessPosition(targetRow, startCol - 1), null));
-                        }
-                    }
-                }
-                if (startCol != 8) {
-                    ChessPiece toAttack = board.getPiece(new ChessPosition(targetRow, startCol + 1));
-                    if (toAttack != null && toAttack.getTeamColor() != getTeamColor()) {
-                        if (targetRow == 1 || targetRow == 8){
-                            movesToReturn.add(new ChessMove(myPosition, new ChessPosition(targetRow, startCol+1), PieceType.BISHOP));
-                            movesToReturn.add(new ChessMove(myPosition, new ChessPosition(targetRow, startCol+1), PieceType.ROOK));
-                            movesToReturn.add(new ChessMove(myPosition, new ChessPosition(targetRow, startCol+1), PieceType.KNIGHT));
-                            movesToReturn.add(new ChessMove(myPosition, new ChessPosition(targetRow, startCol+1), PieceType.QUEEN));
-                        }
-                        else {
-                            movesToReturn.add(new ChessMove(myPosition, new ChessPosition(targetRow, startCol + 1), null));
-                        }
-                    }
-                }
-//                TODO if needed En Passant
-//                int enPassantRow = (pawnStep == 1) ? 5 : 4;
-//                if (startRow == enPassantRow){
-//                    if (startCol != 1) {
-//                    }
-//                }
-            yield movesToReturn; }
             case PieceType.ROOK -> {
                 boolean colGoUp = true;
                 boolean colGoDown = true;
@@ -230,8 +243,11 @@ public class ChessPiece {
                     }
                 }
             yield movesToReturn;}
-            case PieceType.QUEEN -> null;
-        };
+            case PieceType.QUEEN -> {
+                movesToReturn.addAll(pieceMoves(board, ))
+            }
+        }
+        return movesToReturn;
     }
 
     @Override
