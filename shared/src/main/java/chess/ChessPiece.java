@@ -48,7 +48,6 @@ public class ChessPiece {
     }
 
 
-//    private boolean rookHelper()
     /**
      * Calculates all the positions a chess piece can move to
      * Does not take into account moves that are illegal due to leaving the king in
@@ -78,7 +77,61 @@ public class ChessPiece {
                     }
                 }
             yield movesToReturn;}
-            case PieceType.PAWN -> null;
+            case PieceType.PAWN -> {
+                // if piece is white it needs to move down, else move up
+                int pawnStep = (pieceToMove.getTeamColor() == ChessGame.TeamColor.WHITE) ? 1 : -1;
+                int targetRow = pawnStep + startRow;
+                ChessPiece targetPiece = board.getPiece(new ChessPosition(targetRow, startCol));
+                if (targetPiece == null) {
+                    if (targetRow == 1 || targetRow == 8){
+                        movesToReturn.add(new ChessMove(myPosition, new ChessPosition(targetRow, startCol), PieceType.BISHOP));
+                        movesToReturn.add(new ChessMove(myPosition, new ChessPosition(targetRow, startCol), PieceType.ROOK));
+                        movesToReturn.add(new ChessMove(myPosition, new ChessPosition(targetRow, startCol), PieceType.KNIGHT));
+                        movesToReturn.add(new ChessMove(myPosition, new ChessPosition(targetRow, startCol), PieceType.QUEEN));
+                    }
+                    else {
+                        movesToReturn.add(new ChessMove(myPosition, new ChessPosition(targetRow, startCol), null));
+                    }
+                    int advRow = (pawnStep == 1) ? 2 : 7;
+                    if (startRow == advRow && board.getPiece(new ChessPosition(targetRow + pawnStep, startCol)) == null) {
+                        movesToReturn.add(new ChessMove(myPosition, new ChessPosition(targetRow+pawnStep, startCol), null));
+                    }
+                }
+                if (startCol != 1) {
+                    ChessPiece toAttack = board.getPiece(new ChessPosition(targetRow, startCol - 1));
+                    if (toAttack != null && toAttack.getTeamColor() != getTeamColor()) {
+                        if (targetRow == 1 || targetRow == 8){
+                            movesToReturn.add(new ChessMove(myPosition, new ChessPosition(targetRow, startCol-1), PieceType.BISHOP));
+                            movesToReturn.add(new ChessMove(myPosition, new ChessPosition(targetRow, startCol-1), PieceType.ROOK));
+                            movesToReturn.add(new ChessMove(myPosition, new ChessPosition(targetRow, startCol-1), PieceType.KNIGHT));
+                            movesToReturn.add(new ChessMove(myPosition, new ChessPosition(targetRow, startCol-1), PieceType.QUEEN));
+                        }
+                        else {
+                            movesToReturn.add(new ChessMove(myPosition, new ChessPosition(targetRow, startCol - 1), null));
+                        }
+                    }
+                }
+                if (startCol != 8) {
+                    ChessPiece toAttack = board.getPiece(new ChessPosition(targetRow, startCol + 1));
+                    if (toAttack != null && toAttack.getTeamColor() != getTeamColor()) {
+                        if (targetRow == 1 || targetRow == 8){
+                            movesToReturn.add(new ChessMove(myPosition, new ChessPosition(targetRow, startCol+1), PieceType.BISHOP));
+                            movesToReturn.add(new ChessMove(myPosition, new ChessPosition(targetRow, startCol+1), PieceType.ROOK));
+                            movesToReturn.add(new ChessMove(myPosition, new ChessPosition(targetRow, startCol+1), PieceType.KNIGHT));
+                            movesToReturn.add(new ChessMove(myPosition, new ChessPosition(targetRow, startCol+1), PieceType.QUEEN));
+                        }
+                        else {
+                            movesToReturn.add(new ChessMove(myPosition, new ChessPosition(targetRow, startCol + 1), null));
+                        }
+                    }
+                }
+//                TODO if needed En Passant
+//                int enPassantRow = (pawnStep == 1) ? 5 : 4;
+//                if (startRow == enPassantRow){
+//                    if (startCol != 1) {
+//                    }
+//                }
+            yield movesToReturn; }
             case PieceType.ROOK -> {
                 boolean colGoUp = true;
                 boolean colGoDown = true;
