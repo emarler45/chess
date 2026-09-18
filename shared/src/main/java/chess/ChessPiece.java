@@ -78,14 +78,20 @@ public class ChessPiece {
             yield movesToReturn;}
             case PieceType.PAWN -> null;
             case PieceType.ROOK -> {
-                for (int i = -7; i < 7; i++) {
+                for (int i = -1; i >= -7; i--) {
                     int moveToRow = startRow + i;
                     if (1 <= moveToRow && moveToRow <= 8) {
-                        movesToReturn.add(new ChessMove(myPosition, new ChessPosition(moveToRow, startCol), null));
+                        ChessPiece destinationPiece = board.getPiece(new ChessPosition(moveToRow, startCol));
+                        if (destinationPiece == null || destinationPiece.getTeamColor() != getTeamColor()){
+                            movesToReturn.add(new ChessMove(myPosition, new ChessPosition(moveToRow, startCol), null));
+                        }
                     }
                     int moveToCol = startCol + i;
                     if (1 <= moveToCol && moveToCol <= 8) {
-                        movesToReturn.add(new ChessMove(myPosition, new ChessPosition(startRow, moveToCol), null));
+                        ChessPiece destinationPiece = board.getPiece(new ChessPosition(startRow, moveToCol));
+                        if (destinationPiece == null || destinationPiece.getTeamColor() != getTeamColor()) {
+                            movesToReturn.add(new ChessMove(myPosition, new ChessPosition(startRow, moveToCol), null));
+                        }
                     }
                 }
                 yield movesToReturn; }
