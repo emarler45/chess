@@ -188,8 +188,48 @@ public class ChessPiece {
                     }
                 }
                 yield movesToReturn;}
-            case PieceType.KNIGHT -> null;
-            case PieceType.BISHOP -> null;
+            case PieceType.KNIGHT -> {
+                int[] sides = new int[]{-1, 1};
+                for (int side : sides) {
+                    for (int half : sides) {
+                        if (startRow + 2 * side >= 1 && startRow + 2 * side <= 8 && startCol + half >= 1 && startCol + half <= 8) {
+                            ChessPosition targetPosUpOver = new ChessPosition(startRow + 2 * side, startCol + half);
+                            if (board.getPiece(targetPosUpOver) == null || board.getPiece(targetPosUpOver).getTeamColor() != getTeamColor()) {
+                                movesToReturn.add(new ChessMove(myPosition, targetPosUpOver, null));
+                            }
+                        }
+                        if (startRow + side >= 1 && startRow + side <= 8 && startCol + 2 * half >= 1 && startCol + 2 * half <= 8) {
+                            ChessPosition targetPosOverUp = new ChessPosition(startRow + side, startCol + 2 * half);
+                            if (board.getPiece(targetPosOverUp) == null || board.getPiece(targetPosOverUp).getTeamColor() != getTeamColor()) {
+                                movesToReturn.add(new ChessMove(myPosition, targetPosOverUp, null));
+                            }
+                        }
+                    }
+                }
+            yield movesToReturn;}
+            case PieceType.BISHOP -> {
+                int[] dirs = {-1, 1};
+                for (int i : dirs){
+                    for (int j : dirs){
+                        for (int k = 1; k < 8; k++){
+                            if (startRow + k*i < 1 || startRow + k*i > 8 || startCol + k*j < 1 || startCol + k*j > 8){
+                                break;
+                            } else {
+                                ChessPosition targetPos = new ChessPosition(startRow + k * i, startCol + k * j);
+                                ChessPiece targetPiece = board.getPiece(targetPos);
+                                if (targetPiece == null) {
+                                    movesToReturn.add(new ChessMove(myPosition, targetPos, null));
+                                } else if (targetPiece.getTeamColor() == getTeamColor()){
+                                    break;
+                                } else {
+                                    movesToReturn.add(new ChessMove(myPosition, targetPos, null));
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+            yield movesToReturn;}
             case PieceType.QUEEN -> null;
         };
     }
