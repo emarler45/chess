@@ -125,6 +125,112 @@ public class ChessPiece {
 //                }
     return movesToReturn; }
 
+    private ArrayList<ChessMove> rookFunction(int startRow, int startCol, ChessBoard board, ChessPosition myPosition) {
+        ArrayList<ChessMove> movesToReturn = new ArrayList<>();
+        boolean colGoUp = true;
+        boolean colGoDown = true;
+        boolean rowGoUp = true;
+        boolean rowGoDown = true;
+        for (int i = 1; i <= 7; i++) {
+            int moveToVal = startRow + i;
+            if (rowGoUp && moveToVal <= 8) {
+                ChessPiece destinationPiece = board.getPiece(new ChessPosition(moveToVal, startCol));
+                if (destinationPiece == null) {
+                    movesToReturn.add(new ChessMove(myPosition, new ChessPosition(moveToVal, startCol), null));
+                } else if (destinationPiece.getTeamColor() == getTeamColor()) {
+                    rowGoUp = false;
+                } else {
+                    movesToReturn.add(new ChessMove(myPosition, new ChessPosition(moveToVal, startCol), null));
+                    rowGoUp = false;
+                }
+            }
+            moveToVal = startRow - i;
+            if (rowGoDown && moveToVal >= 1) {
+                ChessPiece destinationPiece = board.getPiece(new ChessPosition(moveToVal, startCol));
+                if (destinationPiece == null) {
+                    movesToReturn.add(new ChessMove(myPosition, new ChessPosition(moveToVal, startCol), null));
+                } else if (destinationPiece.getTeamColor() == getTeamColor()) {
+                    rowGoDown = false;
+                } else {
+                    movesToReturn.add(new ChessMove(myPosition, new ChessPosition(moveToVal, startCol), null));
+                    rowGoDown = false;
+                }
+            }
+            moveToVal = startCol + i;
+            if (colGoUp && moveToVal <= 8) {
+                ChessPiece destinationPiece = board.getPiece(new ChessPosition(startRow, moveToVal));
+                if (destinationPiece == null) {
+                    movesToReturn.add(new ChessMove(myPosition, new ChessPosition(startRow, moveToVal), null));
+                } else if (destinationPiece.getTeamColor() == getTeamColor()) {
+                    colGoUp = false;
+                } else {
+                    movesToReturn.add(new ChessMove(myPosition, new ChessPosition(startRow, moveToVal), null));
+                    colGoUp = false;
+                }
+            }
+            moveToVal = startCol - i;
+            if (colGoDown && moveToVal >= 1) {
+                ChessPiece destinationPiece = board.getPiece(new ChessPosition(startRow, moveToVal));
+                if (destinationPiece == null) {
+                    movesToReturn.add(new ChessMove(myPosition, new ChessPosition(startRow, moveToVal), null));
+                } else if (destinationPiece.getTeamColor() == getTeamColor()) {
+                    colGoDown = false;
+                } else {
+                    movesToReturn.add(new ChessMove(myPosition, new ChessPosition(startRow, moveToVal), null));
+                    colGoDown = false;
+                }
+            }
+        }
+        return movesToReturn;
+    }
+
+    private ArrayList<ChessMove> knightFunction(int startRow, int startCol, ChessBoard board, ChessPosition myPosition){
+        ArrayList<ChessMove> movesToReturn = new ArrayList<>();
+        int[] sides = new int[]{-1, 1};
+        for (int side : sides) {
+            for (int half : sides) {
+                if (startRow + 2 * side >= 1 && startRow + 2 * side <= 8 && startCol + half >= 1 && startCol + half <= 8) {
+                    ChessPosition targetPosUpOver = new ChessPosition(startRow + 2 * side, startCol + half);
+                    if (board.getPiece(targetPosUpOver) == null || board.getPiece(targetPosUpOver).getTeamColor() != getTeamColor()) {
+                        movesToReturn.add(new ChessMove(myPosition, targetPosUpOver, null));
+                    }
+                }
+                if (startRow + side >= 1 && startRow + side <= 8 && startCol + 2 * half >= 1 && startCol + 2 * half <= 8) {
+                    ChessPosition targetPosOverUp = new ChessPosition(startRow + side, startCol + 2 * half);
+                    if (board.getPiece(targetPosOverUp) == null || board.getPiece(targetPosOverUp).getTeamColor() != getTeamColor()) {
+                        movesToReturn.add(new ChessMove(myPosition, targetPosOverUp, null));
+                    }
+                }
+            }
+        }
+        return movesToReturn;
+    }
+
+    private ArrayList<ChessMove> bishopFunction(int startRow, int startCol, ChessBoard board, ChessPosition myPosition){
+        ArrayList<ChessMove> movesToReturn = new ArrayList<>();
+        int[] dirs = {-1, 1};
+        for (int i : dirs){
+            for (int j : dirs){
+                for (int k = 1; k < 8; k++){
+                    if (startRow + k*i < 1 || startRow + k*i > 8 || startCol + k*j < 1 || startCol + k*j > 8){
+                        break;
+                    } else {
+                        ChessPosition targetPos = new ChessPosition(startRow + k * i, startCol + k * j);
+                        ChessPiece targetPiece = board.getPiece(targetPos);
+                        if (targetPiece == null) {
+                            movesToReturn.add(new ChessMove(myPosition, targetPos, null));
+                        } else if (targetPiece.getTeamColor() == getTeamColor()){
+                            break;
+                        } else {
+                            movesToReturn.add(new ChessMove(myPosition, targetPos, null));
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+        return movesToReturn;
+    }
     /**
      * Calculates all the positions a chess piece can move to
      * Does not take into account moves that are illegal due to leaving the king in
@@ -146,105 +252,17 @@ public class ChessPiece {
                 movesToReturn = pawnFunction(pawnStep, startRow, startCol, board, myPosition);
                 }
             case PieceType.ROOK -> {
-                boolean colGoUp = true;
-                boolean colGoDown = true;
-                boolean rowGoUp = true;
-                boolean rowGoDown = true;
-                for (int i = 1; i <= 7; i++) {
-                    int moveToVal = startRow + i;
-                    if (rowGoUp && moveToVal <= 8) {
-                        ChessPiece destinationPiece = board.getPiece(new ChessPosition(moveToVal, startCol));
-                        if (destinationPiece == null) {
-                            movesToReturn.add(new ChessMove(myPosition, new ChessPosition(moveToVal, startCol), null));
-                        } else if (destinationPiece.getTeamColor() == getTeamColor()) {
-                            rowGoUp = false;
-                        } else {
-                            movesToReturn.add(new ChessMove(myPosition, new ChessPosition(moveToVal, startCol), null));
-                            rowGoUp = false;
-                        }
-                    }
-                    moveToVal = startRow - i;
-                    if (rowGoDown && moveToVal >= 1) {
-                        ChessPiece destinationPiece = board.getPiece(new ChessPosition(moveToVal, startCol));
-                        if (destinationPiece == null) {
-                            movesToReturn.add(new ChessMove(myPosition, new ChessPosition(moveToVal, startCol), null));
-                        } else if (destinationPiece.getTeamColor() == getTeamColor()) {
-                            rowGoDown = false;
-                        } else {
-                            movesToReturn.add(new ChessMove(myPosition, new ChessPosition(moveToVal, startCol), null));
-                            rowGoDown = false;
-                        }
-                    }
-                    moveToVal = startCol + i;
-                    if (colGoUp && moveToVal <= 8) {
-                        ChessPiece destinationPiece = board.getPiece(new ChessPosition(startRow, moveToVal));
-                        if (destinationPiece == null) {
-                            movesToReturn.add(new ChessMove(myPosition, new ChessPosition(startRow, moveToVal), null));
-                        } else if (destinationPiece.getTeamColor() == getTeamColor()) {
-                            colGoUp = false;
-                        } else {
-                            movesToReturn.add(new ChessMove(myPosition, new ChessPosition(startRow, moveToVal), null));
-                            colGoUp = false;
-                        }
-                    }
-                    moveToVal = startCol - i;
-                    if (colGoDown && moveToVal >= 1) {
-                        ChessPiece destinationPiece = board.getPiece(new ChessPosition(startRow, moveToVal));
-                        if (destinationPiece == null) {
-                            movesToReturn.add(new ChessMove(myPosition, new ChessPosition(startRow, moveToVal), null));
-                        } else if (destinationPiece.getTeamColor() == getTeamColor()) {
-                            colGoDown = false;
-                        } else {
-                            movesToReturn.add(new ChessMove(myPosition, new ChessPosition(startRow, moveToVal), null));
-                            colGoDown = false;
-                        }
-                    }
-                }
-                yield movesToReturn;}
+                movesToReturn = rookFunction(startRow, startCol, board, myPosition);
+            }
             case PieceType.KNIGHT -> {
-                int[] sides = new int[]{-1, 1};
-                for (int side : sides) {
-                    for (int half : sides) {
-                        if (startRow + 2 * side >= 1 && startRow + 2 * side <= 8 && startCol + half >= 1 && startCol + half <= 8) {
-                            ChessPosition targetPosUpOver = new ChessPosition(startRow + 2 * side, startCol + half);
-                            if (board.getPiece(targetPosUpOver) == null || board.getPiece(targetPosUpOver).getTeamColor() != getTeamColor()) {
-                                movesToReturn.add(new ChessMove(myPosition, targetPosUpOver, null));
-                            }
-                        }
-                        if (startRow + side >= 1 && startRow + side <= 8 && startCol + 2 * half >= 1 && startCol + 2 * half <= 8) {
-                            ChessPosition targetPosOverUp = new ChessPosition(startRow + side, startCol + 2 * half);
-                            if (board.getPiece(targetPosOverUp) == null || board.getPiece(targetPosOverUp).getTeamColor() != getTeamColor()) {
-                                movesToReturn.add(new ChessMove(myPosition, targetPosOverUp, null));
-                            }
-                        }
-                    }
-                }
-            yield movesToReturn;}
+                movesToReturn = knightFunction(startRow, startCol, board, myPosition);
+            }
             case PieceType.BISHOP -> {
-                int[] dirs = {-1, 1};
-                for (int i : dirs){
-                    for (int j : dirs){
-                        for (int k = 1; k < 8; k++){
-                            if (startRow + k*i < 1 || startRow + k*i > 8 || startCol + k*j < 1 || startCol + k*j > 8){
-                                break;
-                            } else {
-                                ChessPosition targetPos = new ChessPosition(startRow + k * i, startCol + k * j);
-                                ChessPiece targetPiece = board.getPiece(targetPos);
-                                if (targetPiece == null) {
-                                    movesToReturn.add(new ChessMove(myPosition, targetPos, null));
-                                } else if (targetPiece.getTeamColor() == getTeamColor()){
-                                    break;
-                                } else {
-                                    movesToReturn.add(new ChessMove(myPosition, targetPos, null));
-                                    break;
-                                }
-                            }
-                        }
-                    }
-                }
-            yield movesToReturn;}
+                movesToReturn = bishopFunction(startRow, startCol, board, myPosition);
+            }
             case PieceType.QUEEN -> {
-                movesToReturn.addAll(pieceMoves(board, ))
+              movesToReturn = rookFunction(startRow, startCol, board, myPosition);
+              movesToReturn.addAll(bishopFunction(startRow, startCol, board, myPosition));
             }
         }
         return movesToReturn;
