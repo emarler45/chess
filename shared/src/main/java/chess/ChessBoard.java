@@ -40,12 +40,36 @@ public class ChessBoard {
         return squares[position.getRow()-1][position.getColumn()-1];
     }
 
+
+    public void removePiece(ChessPosition position) {
+        squares[position.getRow()-1][position.getColumn()-1] = null;
+    }
+
     /**
      * Sets the board to the default starting board
      * (How the game of chess normally starts)
      */
     public void resetBoard() {
-        throw new RuntimeException("Not implemented");
+        squares = new ChessPiece[8][8];
+        int counter = 0;
+        for (ChessPiece.PieceType type : ChessPiece.PieceType.values()){
+            if (counter == 3 || counter == 4){
+                addPiece(new ChessPosition(1, 1+counter), new ChessPiece(ChessGame.TeamColor.WHITE, type));
+                addPiece(new ChessPosition(8, 1+counter), new ChessPiece(ChessGame.TeamColor.BLACK, type));
+                counter++;
+            } else if (counter == 5){
+                for (int i = 1; i <= 8; i++){
+                    addPiece(new ChessPosition(2, i), new ChessPiece(ChessGame.TeamColor.WHITE, type));
+                    addPiece(new ChessPosition(7, i), new ChessPiece(ChessGame.TeamColor.BLACK, type));
+                }
+            } else {
+                addPiece(new ChessPosition(1, 1 + counter), new ChessPiece(ChessGame.TeamColor.WHITE, type));
+                addPiece(new ChessPosition(1, 8 - counter), new ChessPiece(ChessGame.TeamColor.WHITE, type));
+                addPiece(new ChessPosition(8, 1 + counter), new ChessPiece(ChessGame.TeamColor.BLACK, type));
+                addPiece(new ChessPosition(8, 8 - counter), new ChessPiece(ChessGame.TeamColor.BLACK, type));
+                counter++;
+            }
+        }
     }
 
     @Override
@@ -62,5 +86,10 @@ public class ChessBoard {
         return Arrays.deepHashCode(squares);
     }
 
-
+    @Override
+    public String toString() {
+        return "ChessBoard{" +
+                "squares=" + Arrays.toString(squares) +
+                '}';
+    }
 }
