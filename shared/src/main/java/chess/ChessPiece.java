@@ -53,10 +53,10 @@ public class ChessPiece {
         ArrayList<ChessMove> movesToReturn = new ArrayList<>();
         for (int i = -1; i <= 1; i++) {
             int endRow = i+startRow;
-            if (endRow < 8 && endRow > 1) {
+            if (endRow <= 8 && endRow >= 1) {
                 for (int j = -1; j <= 1; j++) {
                     int endCol = j+startCol;
-                    if (endCol < 8 && endCol > 1) {
+                    if (endCol <= 8 && endCol >= 1) {
                         ChessPiece destinationPiece = board.getPiece(new ChessPosition(endRow, endCol));
                         if (destinationPiece == null || destinationPiece.getTeamColor() != getTeamColor()){
                             movesToReturn.add(new ChessMove(myPosition, new ChessPosition(startRow + i, startCol + j), null));
