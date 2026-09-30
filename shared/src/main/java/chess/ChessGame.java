@@ -12,7 +12,7 @@ import java.util.Objects;
 public class ChessGame {
 
     private ChessBoard board = new ChessBoard();
-    private TeamColor currTeamTurn = TeamColor.WHITE;
+    private TeamColor currTeam = TeamColor.WHITE;
 
     public ChessGame() {
 
@@ -22,7 +22,7 @@ public class ChessGame {
      * @return Which team's turn it is
      */
     public TeamColor getTeamTurn() {
-        return currTeamTurn;
+        return currTeam;
     }
 
     /**
@@ -31,7 +31,7 @@ public class ChessGame {
      * @param team the team whose turn it is
      */
     public void setTeamTurn(TeamColor team) {
-        currTeamTurn = team;
+        currTeam = team;
     }
 
     /**
@@ -51,6 +51,7 @@ public class ChessGame {
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         ChessPiece currPiece = board.getPiece(startPosition);
+        if (currPiece == null) return null;
         return currPiece.pieceMoves(board, startPosition);
         // Use isInCheck to determine which moves help and which dont
     }
@@ -62,7 +63,13 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        throw new RuntimeException("Not implemented");
+        ChessPosition start = move.getStartPosition();
+        ChessPiece pieceToMove = board.getPiece(start);
+        if (pieceToMove == null || pieceToMove.getTeamColor() != currTeam) throw new InvalidMoveException();
+        Collection<ChessMove> validList = validMoves(start);
+        if (validList.contains(move)){
+            board.movePiece(move);
+        }
     }
 
     /**
@@ -120,11 +127,11 @@ public class ChessGame {
             return false;
         }
         ChessGame chessGame = (ChessGame) o;
-        return Objects.equals(board, chessGame.board) && currTeamTurn == chessGame.currTeamTurn;
+        return Objects.equals(board, chessGame.board) && currTeam == chessGame.currTeam;
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(board, currTeamTurn);
+        return Objects.hash(board, currTeam);
     }
 }
