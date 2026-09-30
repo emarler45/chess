@@ -1,5 +1,6 @@
 package chess;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 
@@ -13,6 +14,8 @@ public class ChessGame {
 
     private ChessBoard board = new ChessBoard();
     private TeamColor currTeam = TeamColor.WHITE;
+
+    // TODO: Dictionary of both teams pieces and positons?
 
     public ChessGame() {
 
@@ -63,13 +66,15 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
+        ChessBoard boardAtStart = board;
         ChessPosition start = move.getStartPosition();
         ChessPiece pieceToMove = board.getPiece(start);
         if (pieceToMove == null || pieceToMove.getTeamColor() != currTeam) throw new InvalidMoveException();
         Collection<ChessMove> validList = validMoves(start);
         if (validList.contains(move)){
             board.movePiece(move);
-        }
+        } else throw new InvalidMoveException();
+        currTeam = (currTeam == TeamColor.WHITE) ? TeamColor.BLACK : TeamColor.WHITE;
     }
 
     /**
@@ -79,7 +84,23 @@ public class ChessGame {
      * @return True if the specified team is in check
      */
     public boolean isInCheck(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        TeamColor enemyColor = (teamColor == TeamColor.WHITE) ? TeamColor.BLACK : TeamColor.WHITE;
+        Collection<ChessMove> friendMoves = getTeamMoves(teamColor);
+        Collection<ChessMove> enemyMoves = getTeamMoves(enemyColor);
+
+    }
+
+    private Collection<ChessMove> getTeamMoves(TeamColor color){
+        ArrayList<ChessMove> movesToReturn = new ArrayList<>();
+        for (int i = 1; i <= 8; i++){
+            for (int j = 1; j <= 8; j++){
+                ChessPiece currPiece = board.getPiece(new ChessPosition(i, j));
+                if (currPiece != null && currPiece.getTeamColor() == color) {
+                    movesToReturn.addAll(currPiece.pieceMoves(board, new ChessPosition(i, j)));
+                }
+            }
+        }
+        return movesToReturn;
     }
 
     /**
