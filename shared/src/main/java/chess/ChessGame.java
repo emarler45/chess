@@ -2,6 +2,8 @@ package chess;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
 
 /**
@@ -15,10 +17,20 @@ public class ChessGame {
     private ChessBoard board = new ChessBoard();
     private TeamColor currTeam = TeamColor.WHITE;
 
-    // TODO: Dictionary of both teams pieces and positons?
+    private ArrayList<ChessPosition> whitePos = new ArrayList<>();
+    private ArrayList<ChessPosition> blackPos = new ArrayList<>();
 
     public ChessGame() {
-
+        int[] rows = new int[]{1, 2, 7, 8};
+        for (int row : rows) {
+            for (int i = 1; i <= 8; i++){
+                if (row < 4){
+                    whitePos.add(new ChessPosition(row, i));
+                } else {
+                    blackPos.add(new ChessPosition(row, i));
+                }
+            }
+        }
     }
 
     /**
