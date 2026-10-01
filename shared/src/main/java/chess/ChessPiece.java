@@ -239,16 +239,15 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        ChessPiece pieceToMove = board.getPiece(myPosition);
         int startRow = myPosition.getRow();
         int startCol = myPosition.getColumn();
         ArrayList<ChessMove> movesToReturn = new ArrayList<>();
-        switch (pieceToMove.type) {
+        switch (type) {
             case PieceType.KING -> {
                 movesToReturn = kingFunction(startRow, startCol, board, myPosition);
             }
             case PieceType.PAWN -> {
-                int pawnStep = (pieceToMove.getTeamColor() == ChessGame.TeamColor.WHITE) ? 1 : -1;
+                int pawnStep = (getTeamColor() == ChessGame.TeamColor.WHITE) ? 1 : -1;
                 movesToReturn = pawnFunction(pawnStep, startRow, startCol, board, myPosition);
                 }
             case PieceType.ROOK -> {
