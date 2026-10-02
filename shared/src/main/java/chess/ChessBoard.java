@@ -16,7 +16,7 @@ public class ChessBoard {
     private ChessPiece[][] squares = new ChessPiece[8][8];
 
     public ChessBoard() {
-        
+//        resetBoard();
     }
 
     /**
@@ -96,7 +96,7 @@ public class ChessBoard {
     @Override
     public String toString() {
         return "ChessBoard{" +
-                "squares=" + Arrays.toString(squares) +
+                "squares=" + Arrays.deepToString(squares) +
                 '}';
     }
 }

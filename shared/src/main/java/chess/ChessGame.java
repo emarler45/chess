@@ -19,14 +19,16 @@ public class ChessGame {
     private ArrayList<ChessPosition> whitePos = new ArrayList<>();
     private ArrayList<ChessPosition> blackPos = new ArrayList<>();
 
-    private ChessPosition blackKingPos = new ChessPosition(8, 5);
-    private ChessPosition whiteKingPos = new ChessPosition(1, 5);
+    private ChessPosition blackKingPos;
+    private ChessPosition whiteKingPos;
 
     public ChessGame() {
         setPiecePos();
     }
 
     private void setPiecePos() {
+        whitePos = new ArrayList<>();
+        blackPos = new ArrayList<>();
         for (int i = 1; i <= 8; i++){
             for (int j = 1; j <= 8; j++){
                 ChessPosition currPos = new ChessPosition(i , j);
@@ -34,8 +36,14 @@ public class ChessGame {
                 if (targetPiece != null){
                     if (targetPiece.getTeamColor() == TeamColor.WHITE){
                         whitePos.add(currPos);
+                        if (targetPiece.getPieceType() == ChessPiece.PieceType.KING){
+                            whiteKingPos = currPos;
+                        }
                     } else {
                         blackPos.add(currPos);
+                        if (targetPiece.getPieceType() == ChessPiece.PieceType.KING){
+                            blackKingPos = currPos;
+                        }
                     }
                 }
             }
