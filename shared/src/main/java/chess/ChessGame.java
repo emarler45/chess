@@ -99,7 +99,7 @@ public class ChessGame {
      * @return True if check is resolved, False if not
     */
     private boolean testMove(ChessMove move, ChessPiece piece){
-        ChessBoard boardAtStart = board;
+        ChessBoard boardAtStart = new ChessBoard(board);
         ChessPosition start = move.getStartPosition();
         ChessPosition end = move.getEndPosition();
         board.addPiece(end, piece);
