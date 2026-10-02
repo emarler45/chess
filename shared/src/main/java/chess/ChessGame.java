@@ -68,6 +68,7 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
+        ChessBoard boardAtStart = board;
         ChessPiece currPiece = board.getPiece(startPosition);
         if (currPiece == null) return null;
         return currPiece.pieceMoves(board, startPosition);
@@ -81,16 +82,20 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
-        ChessBoard boardAtStart = board;
         ChessPosition start = move.getStartPosition();
+        ChessPosition end = move.getEndPosition();
         ChessPiece pieceToMove = board.getPiece(start);
         if (pieceToMove == null || pieceToMove.getTeamColor() != currTeam) throw new InvalidMoveException();
         Collection<ChessMove> validList = validMoves(start);
         if (validList.contains(move)){
-            board.movePiece(move);
+            board.removePiece(start);
+            if (move.getPromotionPiece() != null){
+                board.addPiece(end, new ChessPiece(currTeam, move.getPromotionPiece()));
+            } else {
+                board.addPiece(end, pieceToMove);
+            }
         } else throw new InvalidMoveException();
         if (pieceToMove.getPieceType() == ChessPiece.PieceType.KING){
-            // Upd King position
             if (pieceToMove.getTeamColor() == TeamColor.WHITE){
                 whiteKingPos = move.getEndPosition();
             } else {
@@ -108,19 +113,22 @@ public class ChessGame {
      */
     public boolean isInCheck(TeamColor teamColor) {
         TeamColor enemyColor = (teamColor == TeamColor.WHITE) ? TeamColor.BLACK : TeamColor.WHITE;
-        Collection<ChessMove> friendMoves = getTeamMoves(teamColor);
-        Collection<ChessMove> enemyMoves = getTeamMoves(enemyColor);
-        return false;
+        ChessPosition friendlyKingPos = (teamColor == TeamColor.WHITE) ? whiteKingPos : blackKingPos;
+        Collection<ChessPosition> enemyMoves = getTeamPos(enemyColor);
+        return (enemyMoves.contains(friendlyKingPos));
     }
 
-    private Collection<ChessMove> getTeamMoves(TeamColor color){
+    private Collection<ChessPosition> getTeamPos(TeamColor color){
         ArrayList<ChessPosition> teamPos = (color == TeamColor.WHITE) ? whitePos : blackPos;
-        ArrayList<ChessMove> movesToReturn = new ArrayList<>();
+        ArrayList<ChessPosition> posToReturn = new ArrayList<>();
         for (ChessPosition piecePos : teamPos){
             ChessPiece currPiece = board.getPiece(piecePos);
-            movesToReturn.addAll(currPiece.pieceMoves(board, piecePos));
+            Collection<ChessMove> currMoves = currPiece.pieceMoves(board, piecePos);
+            for (ChessMove move : currMoves){
+                posToReturn.add(move.getEndPosition());
+            }
         }
-        return movesToReturn;
+        return posToReturn;
     }
 
     /**
