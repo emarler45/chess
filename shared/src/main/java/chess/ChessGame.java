@@ -20,6 +20,9 @@ public class ChessGame {
     private ArrayList<ChessPosition> whitePos = new ArrayList<>();
     private ArrayList<ChessPosition> blackPos = new ArrayList<>();
 
+    private ChessPosition blackKingPos = new ChessPosition(8, 5);
+    private ChessPosition whiteKingPos = new ChessPosition(1, 5);
+
     public ChessGame() {
         int[] rows = new int[]{1, 2, 7, 8};
         for (int row : rows) {
@@ -86,6 +89,14 @@ public class ChessGame {
         if (validList.contains(move)){
             board.movePiece(move);
         } else throw new InvalidMoveException();
+        if (pieceToMove.getPieceType() == ChessPiece.PieceType.KING){
+            // Upd King position
+            if (pieceToMove.getTeamColor() == TeamColor.WHITE){
+                whiteKingPos = move.getEndPosition();
+            } else {
+                blackKingPos = move.getEndPosition();
+            }
+        }
         currTeam = (currTeam == TeamColor.WHITE) ? TeamColor.BLACK : TeamColor.WHITE;
     }
 
@@ -99,18 +110,15 @@ public class ChessGame {
         TeamColor enemyColor = (teamColor == TeamColor.WHITE) ? TeamColor.BLACK : TeamColor.WHITE;
         Collection<ChessMove> friendMoves = getTeamMoves(teamColor);
         Collection<ChessMove> enemyMoves = getTeamMoves(enemyColor);
-
+        return false;
     }
 
     private Collection<ChessMove> getTeamMoves(TeamColor color){
+        ArrayList<ChessPosition> teamPos = (color == TeamColor.WHITE) ? whitePos : blackPos;
         ArrayList<ChessMove> movesToReturn = new ArrayList<>();
-        for (int i = 1; i <= 8; i++){
-            for (int j = 1; j <= 8; j++){
-                ChessPiece currPiece = board.getPiece(new ChessPosition(i, j));
-                if (currPiece != null && currPiece.getTeamColor() == color) {
-                    movesToReturn.addAll(currPiece.pieceMoves(board, new ChessPosition(i, j)));
-                }
-            }
+        for (ChessPosition piecePos : teamPos){
+            ChessPiece currPiece = board.getPiece(piecePos);
+            movesToReturn.addAll(currPiece.pieceMoves(board, piecePos));
         }
         return movesToReturn;
     }
