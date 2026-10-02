@@ -2,6 +2,7 @@ package chess;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Iterator;
 import java.util.Objects;
 
 /**
@@ -73,13 +74,32 @@ public class ChessGame {
      * startPosition
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
-        ChessBoard boardAtStart = board;
         ChessPiece currPiece = board.getPiece(startPosition);
         if (currPiece == null) return null;
-        return currPiece.pieceMoves(board, startPosition);
+        Collection<ChessMove> allMoves = currPiece.pieceMoves(board, startPosition);
         // Use isInCheck to determine which moves help and which dont
+        if (isInCheck(currPiece.getTeamColor())){
+            allMoves.removeIf(currMove -> !testMove(currMove, currPiece));
+        }
+        return allMoves;
     }
 
+    /**
+     * Makes a move and checks if it's legal
+     * @param move move to test
+     * @param piece piece to move
+     * @return True if check is resolved, False if not
+    */
+    private boolean testMove(ChessMove move, ChessPiece piece){
+        ChessBoard boardAtStart = board;
+        ChessPosition start = move.getStartPosition();
+        ChessPosition end = move.getEndPosition();
+        board.addPiece(end, piece);
+        board.removePiece(start);
+        boolean checkResolved = !isInCheck(piece.getTeamColor());
+        setBoard(boardAtStart);
+        return checkResolved;
+    }
     /**
      * Makes a move in the chess game
      *
@@ -149,7 +169,16 @@ public class ChessGame {
      * @return True if the specified team is in checkmate
      */
     public boolean isInCheckmate(TeamColor teamColor) {
-        throw new RuntimeException("Not implemented");
+        ArrayList<ChessPosition> friendPos = (teamColor == TeamColor.WHITE) ? whitePos : blackPos;
+        ArrayList<ChessMove> possibleMoves = new ArrayList<>();
+        if (isInCheck(teamColor)){
+            for (ChessPosition pos : friendPos){
+                ChessPiece currPiece = board.getPiece(pos);
+                possibleMoves.addAll(currPiece.pieceMoves(board, pos));
+            }
+            return (possibleMoves.isEmpty());
+        }
+        return false;
     }
 
     /**
