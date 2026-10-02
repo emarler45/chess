@@ -85,10 +85,7 @@ public class ChessGame {
         ChessPiece currPiece = board.getPiece(startPosition);
         if (currPiece == null) return null;
         Collection<ChessMove> allMoves = currPiece.pieceMoves(board, startPosition);
-        // Use isInCheck to determine which moves help and which dont
-        if (isInCheck(currPiece.getTeamColor())){
-            allMoves.removeIf(currMove -> !testMove(currMove, currPiece));
-        }
+        allMoves.removeIf(currMove -> !testMove(currMove, currPiece));
         return allMoves;
     }
 
@@ -105,6 +102,19 @@ public class ChessGame {
         board.addPiece(end, piece);
         board.removePiece(start);
         boolean checkResolved = !isInCheck(piece.getTeamColor());
+        if (checkResolved && piece.getPieceType() == ChessPiece.PieceType.KING){
+            if (piece.getTeamColor() == TeamColor.WHITE){
+                ChessPosition oldWhiteKingPos = new ChessPosition(whiteKingPos.getRow(), whiteKingPos.getColumn());
+                whiteKingPos = end;
+                checkResolved = !isInCheck(piece.getTeamColor());
+                whiteKingPos = oldWhiteKingPos;
+            } else {
+                ChessPosition oldBlackKingPos = new ChessPosition(blackKingPos.getRow(), blackKingPos.getColumn());
+                blackKingPos = end;
+                checkResolved = !isInCheck(piece.getTeamColor());
+                blackKingPos = oldBlackKingPos;
+            }
+        }
         setBoard(boardAtStart);
         return checkResolved;
     }
