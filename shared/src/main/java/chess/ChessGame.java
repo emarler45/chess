@@ -102,7 +102,7 @@ public class ChessGame {
         board.addPiece(end, piece);
         board.removePiece(start);
         boolean checkResolved = !isInCheck(piece.getTeamColor());
-        if (checkResolved && piece.getPieceType() == ChessPiece.PieceType.KING){
+        if (piece.getPieceType() == ChessPiece.PieceType.KING){
             if (piece.getTeamColor() == TeamColor.WHITE){
                 ChessPosition oldWhiteKingPos = new ChessPosition(whiteKingPos.getRow(), whiteKingPos.getColumn());
                 whiteKingPos = end;
