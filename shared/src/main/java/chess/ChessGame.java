@@ -23,6 +23,7 @@ public class ChessGame {
     private ChessPosition whiteKingPos;
 
     public ChessGame() {
+        board.resetBoard();
         setPiecePos();
     }
 
