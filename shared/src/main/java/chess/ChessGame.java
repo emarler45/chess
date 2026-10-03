@@ -204,7 +204,8 @@ public class ChessGame {
         if (isInCheck(teamColor)){
             for (ChessPosition pos : friendPos){
                 ChessPiece currPiece = board.getPiece(pos);
-                possibleMoves.addAll(currPiece.pieceMoves(board, pos));
+                possibleMoves.addAll(validMoves(pos));
+//                possibleMoves.addAll(currPiece.pieceMoves(board, pos));
             }
             return (possibleMoves.isEmpty());
         }
@@ -219,7 +220,12 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        return (getTeamAtkPos(teamColor) == null && !isInCheck(teamColor));
+        ArrayList<ChessPosition> friendlyPos = (teamColor == TeamColor.WHITE) ? whitePos : blackPos;
+        ArrayList<ChessMove> validMovesList = new ArrayList<>();
+        for (ChessPosition piecePos : friendlyPos){
+            validMovesList.addAll(validMoves(piecePos));
+        }
+        return validMovesList.isEmpty() && !isInCheck(teamColor);
     }
 
     /**
