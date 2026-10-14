@@ -1,6 +1,5 @@
 package chess;
 
-import java.lang.reflect.Array;
 import java.util.Collection;
 import java.util.ArrayList;
 import java.util.Objects;
@@ -116,12 +115,6 @@ public class ChessPiece {
                 }
             }
         }
-//                TODO if needed En Passant
-//                int enPassantRow = (pawnStep == 1) ? 5 : 4;
-//                if (startRow == enPassantRow){
-//                    if (startCol != 1) {
-//                    }
-//                }
     return movesToReturn; }
 
     private ArrayList<ChessMove> rookFunction(int startRow, int startCol, ChessBoard board, ChessPosition myPosition) {
