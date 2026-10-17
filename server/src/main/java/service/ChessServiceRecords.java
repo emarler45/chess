@@ -1,10 +1,6 @@
 package service;
 
-public class ChessService {
-
-    public ChessService() {
-
-    }
+public class ChessServiceRecords {
 
     public record RegisterRequest(
             String username,

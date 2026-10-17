@@ -3,7 +3,7 @@ package server;
 import io.javalin.*;
 import io.javalin.http.Context;
 import service.*;
-import service.ChessService.*;
+import service.ChessServiceRecords.*;
 import com.google.gson.Gson;
 
 public class Server {
