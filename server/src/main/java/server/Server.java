@@ -3,20 +3,16 @@ package server;
 import io.javalin.*;
 import io.javalin.http.Context;
 import service.*;
+import service.ChessService.*;
 import com.google.gson.Gson;
-
-import java.util.Map;
 
 public class Server {
 
-    record RegisterRequest(
-            String username,
-            String password,
-            String email
-    ){}
+    private final Gson srlzr = new Gson();
+
 
     private final Javalin javalin;
-    private final ChessService service = new ChessService();
+    private final ChessUserService service = new ChessUserService();
 
     public Server() {
         javalin = Javalin.create(config -> config.staticFiles.add("web"))
@@ -28,8 +24,9 @@ public class Server {
 
     private void registerUser(Context ctx) {
         RegisterRequest r = new Gson().fromJson(ctx.body(), RegisterRequest.class);
-        String body = new Gson().toJson(Map.of("message", "hello!"));
+        RegisterResult response = service.registerUser(r);
         ctx.contentType("application/json");
+        var body = srlzr.toJson(response);
         ctx.result(body);
     }
 
