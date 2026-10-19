@@ -32,7 +32,7 @@ public class Server {
             var body = srlzr.toJson(response);
             ctx.result(body);
         } catch (AlreadyTakenException e) {
-            ctx.status();
+            ctx.status(403);
             ctx.result(srlzr.toJson(Map.of("message", "Error: %s".formatted(e.getMessage()))));
         } catch (Exception e) {
             ctx.status(500);

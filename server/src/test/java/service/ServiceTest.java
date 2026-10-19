@@ -3,6 +3,7 @@ package service;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -10,6 +11,10 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ServiceTest {
 
     public ChessUserService user = new ChessUserService();
+
+    public CSR.RegisterRequest makeRegisterReq(){
+        return new CSR.RegisterRequest("username", "password", "email");
+    }
 
     @Test
     public void returnsResult() throws AlreadyTakenException {
@@ -39,6 +44,13 @@ public class ServiceTest {
         CSR.RegisterResult result1 = user.registerUser(r1);
         CSR.RegisterResult result2 = user.registerUser(r2);
         assertThrows(AlreadyTakenException.class, () -> user.registerUser(r3));
+    }
+
+    @Test
+    public void generatesAuthToken() throws AlreadyTakenException {
+        CSR.RegisterRequest r = makeRegisterReq();
+        CSR.RegisterResult result = user.registerUser(r);
+        assertInstanceOf(UUID.class, UUID.fromString(result.authToken()));
     }
 
 }
