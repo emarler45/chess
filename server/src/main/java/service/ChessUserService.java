@@ -4,7 +4,7 @@ package service;
 
 public class ChessUserService {
 
-    public ChessServiceRecords.RegisterResult registerUser(ChessServiceRecords.RegisterRequest r) {
-        return new ChessServiceRecords.RegisterResult("gub", "username");
+    public CSR.RegisterResult registerUser(CSR.RegisterRequest r) {
+        return new CSR.RegisterResult("gub", "username");
     }
 }

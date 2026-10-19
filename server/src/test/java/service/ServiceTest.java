@@ -10,8 +10,8 @@ public class ServiceTest {
 
     @Test
     public void returnsResult() {
-        ChessServiceRecords.RegisterRequest r = new ChessServiceRecords.RegisterRequest("username", "password", "email");
-        ChessServiceRecords.RegisterResult result = user.registerUser(r);
+        CSR.RegisterRequest r = new CSR.RegisterRequest("username", "password", "email");
+        CSR.RegisterResult result = user.registerUser(r);
         assertNotNull(result);
         assertInstanceOf(String.class, result.username());
         assertInstanceOf(String.class, result.authToken());
