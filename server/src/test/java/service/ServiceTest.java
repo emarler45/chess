@@ -1,9 +1,7 @@
 package service;
 
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
-import java.sql.ResultSet;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -13,7 +11,7 @@ public class ServiceTest {
     public ChessUserService user = new ChessUserService();
 
     @Test
-    public void returnsResult() {
+    public void returnsResult() throws AlreadyTakenException {
         CSR.RegisterRequest r = new CSR.RegisterRequest("username", "password", "email");
         CSR.RegisterResult result = user.registerUser(r);
         assertNotNull(result);
@@ -22,7 +20,7 @@ public class ServiceTest {
     }
 
     @Test
-    public void returnsPassedUsername() {
+    public void returnsPassedUsername() throws AlreadyTakenException {
         String username = "elki";
         CSR.RegisterRequest r = new CSR.RegisterRequest(username, "password", "email");
         CSR.RegisterResult result = user.registerUser(r);
@@ -30,11 +28,13 @@ public class ServiceTest {
     }
 
     @Test
-    @DisplayName("Inserts Username into DB")
-    public void insertsUser() {
-        String username = "gamer";
-        CSR.RegisterRequest r = new CSR.RegisterRequest(username, "pw", "email");
-        CSR.RegisterResult result = user.registerUser(r);
-
+    public void rejectsSameUsername() throws AlreadyTakenException {
+        String username1 = "gamer";
+        String username2 = "gamer";
+        CSR.RegisterRequest r1 = new CSR.RegisterRequest(username1, "pw", "email1");
+        CSR.RegisterRequest r2 = new CSR.RegisterRequest(username2, "wp", "email2");
+        CSR.RegisterResult result1 = user.registerUser(r1);
+        assertThrows(AlreadyTakenException.class, () -> user.registerUser(r2));
     }
+
 }

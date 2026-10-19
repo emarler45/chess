@@ -13,11 +13,12 @@ public class UserDAOMemory implements UserDAO {
     public UserDAOMemory() {
     }
 
+    @Override
     public void insertUser(UserData data) {
         dataList.add(data);
     }
 
-
+    @Override
     public UserData getUserData(String username) {
         for (UserData currData : dataList) {
             if (Objects.equals(currData.username(), username)) {
