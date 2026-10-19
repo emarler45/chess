@@ -24,4 +24,9 @@ public class AuthDAOMemory implements AuthDAO{
         }
     return null;
     }
+
+    @Override
+    public boolean verify(AuthData data){
+        return dataList.contains(data);
+    }
 }

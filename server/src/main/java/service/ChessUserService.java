@@ -22,7 +22,6 @@ public class ChessUserService {
             authdao.insertData(auth);
             return new CSR.RegisterResult(auth.authToken(), auth.username());
         }
-
     }
 
     private AuthData generateAuth(String name) {
