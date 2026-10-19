@@ -6,6 +6,8 @@ import service.*;
 import service.CSR.*;
 import com.google.gson.Gson;
 
+import java.util.Map;
+
 public class Server {
 
     private final Gson srlzr = new Gson();
@@ -23,11 +25,17 @@ public class Server {
     }
 
     private void registerUser(Context ctx) {
-        RegisterRequest r = new Gson().fromJson(ctx.body(), RegisterRequest.class);
-        RegisterResult response = service.registerUser(r);
-        ctx.contentType("application/json");
-        var body = srlzr.toJson(response);
-        ctx.result(body);
+        try {
+            RegisterRequest r = new Gson().fromJson(ctx.body(), RegisterRequest.class);
+            RegisterResult response = service.registerUser(r);
+            ctx.contentType("application/json");
+            var body = srlzr.toJson(response);
+            ctx.result(body);
+        } catch (Exception e) {
+            ctx.status(500);
+            ctx.result(srlzr.toJson(Map.of("message", "Error: %s".formatted(e.getMessage()))));
+        }
+
     }
 
     public int run(int desiredPort) {
