@@ -1,5 +1,6 @@
 package service;
 
+import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 
@@ -28,13 +29,16 @@ public class ServiceTest {
     }
 
     @Test
+    @DisplayName("Throws for repeat username only")
     public void rejectsSameUsername() throws AlreadyTakenException {
         String username1 = "gamer";
-        String username2 = "gamer";
+        String username2 = "gaming";
         CSR.RegisterRequest r1 = new CSR.RegisterRequest(username1, "pw", "email1");
-        CSR.RegisterRequest r2 = new CSR.RegisterRequest(username2, "wp", "email2");
+        CSR.RegisterRequest r2 = new CSR.RegisterRequest(username2, "pw", "email1");
+        CSR.RegisterRequest r3 = new CSR.RegisterRequest(username2, "wp", "email2");
         CSR.RegisterResult result1 = user.registerUser(r1);
-        assertThrows(AlreadyTakenException.class, () -> user.registerUser(r2));
+        CSR.RegisterResult result2 = user.registerUser(r2);
+        assertThrows(AlreadyTakenException.class, () -> user.registerUser(r3));
     }
 
 }
