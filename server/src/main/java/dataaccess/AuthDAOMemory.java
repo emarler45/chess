@@ -29,4 +29,8 @@ public class AuthDAOMemory implements AuthDAO{
     public boolean verify(AuthData data){
         return dataList.contains(data);
     }
+
+    public int getNumOfAuths() {
+        return dataList.size();
+    }
 }

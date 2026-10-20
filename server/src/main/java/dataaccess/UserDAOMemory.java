@@ -27,4 +27,8 @@ public class UserDAOMemory implements UserDAO {
         }
         return null;
     }
+
+    public int getNumOfUsers(){
+        return dataList.size();
+    }
 }
