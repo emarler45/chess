@@ -3,7 +3,6 @@ package server;
 import io.javalin.*;
 import io.javalin.http.Context;
 import service.*;
-import service.CSR.*;
 import com.google.gson.Gson;
 
 import java.util.Map;
@@ -18,7 +17,8 @@ public class Server {
 
     public Server() {
         javalin = Javalin.create(config -> config.staticFiles.add("web"))
-                .post("/user", this::registerUser);
+                .post("/user", this::registerUser)
+                .delete("/db", this::clearDB);
 
         // Register your endpoints and exception handlers here.
 
@@ -38,6 +38,10 @@ public class Server {
             ctx.status(500);
             ctx.result(srlzr.toJson(Map.of("message", "Error: %s".formatted(e.getMessage()))));
         }
+
+    }
+
+    private void clearDB(Context ctx) {
 
     }
 
