@@ -8,7 +8,10 @@ public class AuthDAOMemory implements AuthDAO{
 
     private final ArrayList<AuthData> dataList = new ArrayList<>();
 
-    public AuthDAOMemory(){}
+    public AuthDAOMemory(){
+        // test entry for use with clear
+        dataList.add(new AuthData("123e4567-e89b-12d3-a456-426614174000", "user"));
+    }
 
     @Override
     public void insertData(AuthData auth) {

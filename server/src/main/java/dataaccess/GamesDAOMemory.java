@@ -1,5 +1,6 @@
 package dataaccess;
 
+import chess.ChessGame;
 import model.GameData;
 
 import java.util.ArrayList;
@@ -8,7 +9,9 @@ public class GamesDAOMemory implements GamesDAO {
 
     private ArrayList<GameData> dataList = new ArrayList<>();
 
-    public GamesDAOMemory() {}
+    public GamesDAOMemory() {
+        dataList.add(new GameData("gamer", null, 1234, "newgame", new ChessGame()));
+    }
 
     @Override
     public void updateGame(GameData data) {
