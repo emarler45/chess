@@ -43,4 +43,12 @@ public class ChessUserService {
             }
         }
     }
+
+    public void logoutUser(LogoutRequest r){
+        if (authdao.verify(r.authToken())) {
+            authdao.deleteData(r.authToken());
+        } else {
+            throw new UnauthorizedException("Token not found.");
+        }
+    }
 }

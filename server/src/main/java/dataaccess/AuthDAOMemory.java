@@ -29,8 +29,13 @@ public class AuthDAOMemory implements AuthDAO{
     }
 
     @Override
-    public boolean verify(AuthData data){
-        return dataList.contains(data);
+    public boolean verify(String token){
+        return (getAuthData(token) != null);
+    }
+
+    public void deleteData(String token){
+        AuthData toDelete = getAuthData(token);
+        dataList.remove(toDelete);
     }
 
     public void clearAll(){

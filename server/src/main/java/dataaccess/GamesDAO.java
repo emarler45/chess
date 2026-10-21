@@ -8,7 +8,7 @@ public interface GamesDAO {
     // Adds new game to db
     void insertGame(GameData data);
     // removes game from db
-    void deleteGame(int gameID);
+    void deleteGame(int gameID) throws DataNotFoundException;
     // retrieves game from db
     GameData getGame(int gameID);
     // change record with matching GameData.gameID with data

@@ -24,7 +24,7 @@ public class GamesDAOMemory implements GamesDAO {
     }
 
     @Override
-    public void deleteGame(int gameID) {
+    public void deleteGame(int gameID) throws DataNotFoundException {
         GameData target = getGame(gameID);
         if (target != null){
             dataList.remove(gameID);

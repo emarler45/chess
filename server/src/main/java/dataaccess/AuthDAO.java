@@ -4,11 +4,13 @@ import model.AuthData;
 
 public interface AuthDAO {
     // insert AuthData into db
-    public void insertData(AuthData auth);
+    void insertData(AuthData auth);
     // retrieve AuthData from db
-    public AuthData getAuthData(String authToken);
+    AuthData getAuthData(String authToken);
     // check if authToken is present in db
-    public boolean verify(AuthData data);
+    boolean verify(String token);
+    // delete given token from db
+    void deleteData(String token);
     // clear all records
     void clearAll();
 }

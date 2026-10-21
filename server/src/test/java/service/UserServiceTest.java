@@ -74,4 +74,16 @@ public class UserServiceTest {
         assertThrows(UnauthorizedException.class, () -> user.loginUser(r));
     }
 
+    @Test
+    public void logoutUser(){
+        LogoutRequest r = new LogoutRequest("123e4567-e89b-12d3-a456-426614174000");
+        user.logoutUser(r);
+    }
+
+    @Test
+    public void logoutBadToken() {
+        LogoutRequest r = new LogoutRequest("123e4567-e89b-12d3-a456-426614174001");
+        assertThrows(UnauthorizedException.class, () -> user.logoutUser(r));
+    }
+
 }

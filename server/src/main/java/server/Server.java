@@ -21,16 +21,31 @@ public class Server {
         javalin = Javalin.create(config -> config.staticFiles.add("web"))
                 .post("/user", this::registerUser)
                 .delete("/db", this::clearDB)
-                .post("/session", this::loginUser);
+                .post("/session", this::loginUser)
+                .delete("/session", this::logoutUser);
 
         // Register your endpoints and exception handlers here.
 
     }
 
+    private void logoutUser(Context ctx){
+        try {
+            LogoutRequest r = srlzr.fromJson(ctx.body(), LogoutRequest.class);
+            user.logoutUser(r);
+        } catch (UnauthorizedException e) {
+            handleError(ctx, 401, e.getMessage());
+        } catch (Exception e) {
+            handleError(ctx, 500, e.getMessage());
+        }
+    }
+
     private void loginUser(Context ctx) {
         try {
-            LoginRequest logr = srlzr.fromJson(ctx.body(), LoginRequest.class);
-            LoginResult response = user.loginUser(logr);
+            LoginRequest r = srlzr.fromJson(ctx.body(), LoginRequest.class);
+            LoginResult response = user.loginUser(r);
+            ctx.contentType("application/json");
+            var body = srlzr.toJson(response);
+            ctx.result(body);
         } catch (DataNotFoundException e){
             handleError(ctx, 400, e.getMessage());
         }
@@ -74,7 +89,6 @@ public class Server {
         ctx.status(code);
         ctx.result(srlzr.toJson(Map.of("message", "Error: %s".formatted(message))));
     }
-
 
     public void stop() {
         javalin.stop();
