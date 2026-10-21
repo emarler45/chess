@@ -53,4 +53,12 @@ public class UserServiceTest {
         assertInstanceOf(UUID.class, UUID.fromString(result.authToken()));
     }
 
+    @Test
+    public void attemptUserLogin() {
+        LoginRequest r = new LoginRequest("username", "pw");
+        LoginResult result = user.loginUser(r);
+        assertEquals("username", result.username());
+        assertInstanceOf(UUID.class, UUID.fromString(result.authToken()));
+    }
+
 }

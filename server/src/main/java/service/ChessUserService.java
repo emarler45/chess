@@ -28,4 +28,15 @@ public class ChessUserService {
         String authToken = UUID.randomUUID().toString();
         return new AuthData(authToken, name);
     }
+
+    public LoginResult loginUser(LoginRequest r) throws DataNotFoundException{
+        UserData foundData = userdao.getUserData(r.username());
+        if (foundData == null){
+            throw new DataNotFoundException("No user with name %s".formatted(r.username()));
+        } else {
+            AuthData newAuth = generateAuth(r.username());
+            authdao.insertData(newAuth);
+            return new LoginResult(newAuth.username(),newAuth.authToken());
+        }
+    }
 }
