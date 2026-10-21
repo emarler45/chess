@@ -11,7 +11,10 @@ public class ChessUserService {
     private final UserDAO userdao = new UserDAOMemory();
     private final AuthDAO authdao = new AuthDAOMemory();
 
-    public RegisterResult registerUser(RegisterRequest r) throws AlreadyTakenException {
+    public RegisterResult registerUser(RegisterRequest r) throws Exception {
+        if (r.username().isEmpty() || r.password().isEmpty() || r.email().isEmpty()){
+            throw new IllegalArgumentException("All fields must be filled.");
+        }
         String username = r.username();
         UserData foundData = userdao.getUserData(username);
         if (foundData != null) {
@@ -30,6 +33,9 @@ public class ChessUserService {
     }
 
     public LoginResult loginUser(LoginRequest r) throws Exception{
+        if (r.username().isEmpty() || r.password().isEmpty()){
+            throw new IllegalArgumentException("Username and password must not be empty.");
+        }
         UserData foundData = userdao.getUserData(r.username());
         if (foundData == null){
             throw new DataNotFoundException("No user with name %s".formatted(r.username()));

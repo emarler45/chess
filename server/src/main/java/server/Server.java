@@ -46,7 +46,7 @@ public class Server {
             LoginRequest r = srlzr.fromJson(ctx.body(), LoginRequest.class);
             LoginResult response = user.loginUser(r);
             handleSuccess(ctx, response);
-        } catch (DataNotFoundException e){
+        } catch (IllegalArgumentException | DataNotFoundException e){
             handleError(ctx, 400, e.getMessage());
         }
         catch (UnauthorizedException e) {
