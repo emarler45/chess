@@ -3,7 +3,6 @@ package dataaccess;
 import model.UserData;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.Objects;
 
 public class UserDAOMemory implements UserDAO {

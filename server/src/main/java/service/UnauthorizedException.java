@@ -1,7 +1,7 @@
 package service;
 
-public class UnauthoriedException extends RuntimeException {
-  public UnauthoriedException(String message) {
-    super(message);
-  }
+public class UnauthorizedException extends RuntimeException {
+    public UnauthorizedException(String message) {
+        super(message);
+    }
 }

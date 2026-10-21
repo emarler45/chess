@@ -29,14 +29,18 @@ public class ChessUserService {
         return new AuthData(authToken, name);
     }
 
-    public LoginResult loginUser(LoginRequest r) throws DataNotFoundException{
+    public LoginResult loginUser(LoginRequest r) throws Exception{
         UserData foundData = userdao.getUserData(r.username());
         if (foundData == null){
             throw new DataNotFoundException("No user with name %s".formatted(r.username()));
         } else {
-            AuthData newAuth = generateAuth(r.username());
-            authdao.insertData(newAuth);
-            return new LoginResult(newAuth.username(),newAuth.authToken());
+            if (foundData.password().equals(r.password())) {
+                AuthData newAuth = generateAuth(r.username());
+                authdao.insertData(newAuth);
+                return new LoginResult(newAuth.username(), newAuth.authToken());
+            } else {
+                throw new UnauthorizedException("Invalid password");
+            }
         }
     }
 }

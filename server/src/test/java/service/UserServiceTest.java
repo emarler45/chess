@@ -1,5 +1,6 @@
 package service;
 
+import dataaccess.DataNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -13,12 +14,12 @@ public class UserServiceTest {
     public ChessUserService user = new ChessUserService();
 
     public RegisterRequest makeRegisterReq(){
-        return new RegisterRequest("username", "password", "email");
+        return new RegisterRequest("gaming", "password", "email");
     }
 
     @Test
     public void returnsResult() throws AlreadyTakenException {
-        RegisterRequest r = new RegisterRequest("username", "password", "email");
+        RegisterRequest r = new RegisterRequest("gaming", "password", "email");
         RegisterResult result = user.registerUser(r);
         assertNotNull(result);
         assertInstanceOf(String.class, result.username());
@@ -54,11 +55,23 @@ public class UserServiceTest {
     }
 
     @Test
-    public void attemptUserLogin() {
+    public void attemptUserLogin() throws Exception {
         LoginRequest r = new LoginRequest("username", "pw");
         LoginResult result = user.loginUser(r);
         assertEquals("username", result.username());
         assertInstanceOf(UUID.class, UUID.fromString(result.authToken()));
+    }
+
+    @Test
+    public void attemptLoginFakeUsername(){
+        LoginRequest r = new LoginRequest("gaming", "pw");
+        assertThrows(DataNotFoundException.class, () -> user.loginUser(r));
+    }
+
+    @Test
+    public void attemptLoginWrongPassword(){
+        LoginRequest r = new LoginRequest("username", "pass");
+        assertThrows(UnauthorizedException.class, () -> user.loginUser(r));
     }
 
 }

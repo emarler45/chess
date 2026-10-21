@@ -1,8 +1,8 @@
 package server;
 
+import dataaccess.DataNotFoundException;
 import io.javalin.*;
 import io.javalin.http.Context;
-import org.jetbrains.annotations.NotNull;
 import service.*;
 import com.google.gson.Gson;
 
@@ -31,8 +31,14 @@ public class Server {
         try {
             LoginRequest logr = srlzr.fromJson(ctx.body(), LoginRequest.class);
             LoginResult response = user.loginUser(logr);
-        } catch (Exception e){
-
+        } catch (DataNotFoundException e){
+            handleError(ctx, 400, e.getMessage());
+        }
+        catch (UnauthorizedException e) {
+            handleError(ctx, 401, e.getMessage());
+        }
+        catch (Exception e){
+            handleError(ctx, 500, e.getMessage());
         }
     }
 
@@ -44,11 +50,9 @@ public class Server {
             var body = srlzr.toJson(response);
             ctx.result(body);
         } catch (AlreadyTakenException e) {
-            ctx.status(403);
-            ctx.result(srlzr.toJson(Map.of("message", "Error: %s".formatted(e.getMessage()))));
+            handleError(ctx, 403, e.getMessage());
         } catch (Exception e) {
-            ctx.status(500);
-            ctx.result(srlzr.toJson(Map.of("message", "Error: %s".formatted(e.getMessage()))));
+            handleError(ctx, 500, e.getMessage());
         }
 
     }
@@ -57,8 +61,7 @@ public class Server {
         try {
             clear.clearAll();
         } catch (Exception e){
-            ctx.status(500);
-            ctx.result(srlzr.toJson(Map.of("message", "Error: %s".formatted(e.getMessage()))));
+            handleError(ctx, 500, e.getMessage());
         }
     }
 
@@ -67,6 +70,10 @@ public class Server {
         return javalin.port();
     }
 
+    private void handleError(Context ctx, int code, String message){
+        ctx.status(code);
+        ctx.result(srlzr.toJson(Map.of("message", "Error: %s".formatted(message))));
+    }
 
 
     public void stop() {
