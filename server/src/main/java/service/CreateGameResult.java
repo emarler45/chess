@@ -1,7 +1,6 @@
 package service;
 
-public record CreateGameResponse(
-        String gameName
-        
+public record CreateGameResult(
+        int gameID
 ) {
 }

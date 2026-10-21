@@ -72,9 +72,12 @@ public class Server {
 
     private void createGame(Context ctx) {
         try {
+            String authToken = ctx.header("authorization");
             CreateGameRequest cgr = srlzr.fromJson(ctx.body(), CreateGameRequest.class);
-            CreateGameResult response = game.createGame(cgr);
+            CreateGameResult response = game.createGame(authToken, cgr);
             handleSuccess(ctx, response);
+        } catch (UnauthorizedException e) {
+            handleError(ctx, 401, e.getMessage());
         } catch (Exception e) {
 
         }

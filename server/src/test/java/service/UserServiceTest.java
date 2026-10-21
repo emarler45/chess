@@ -75,7 +75,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void logoutUser(){
+    public void logoutUser() throws UnauthorizedException{
         LogoutRequest r = new LogoutRequest("123e4567-e89b-12d3-a456-426614174000");
         user.logoutUser(r);
     }

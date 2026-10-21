@@ -44,7 +44,7 @@ public class ChessUserService {
         }
     }
 
-    public void logoutUser(LogoutRequest r){
+    public void logoutUser(LogoutRequest r) throws UnauthorizedException{
         if (authdao.verify(r.authToken())) {
             authdao.deleteData(r.authToken());
         } else {
