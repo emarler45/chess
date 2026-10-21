@@ -18,7 +18,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void returnsResult() throws AlreadyTakenException {
+    public void returnsResult() throws Exception {
         RegisterRequest r = new RegisterRequest("gaming", "password", "email");
         RegisterResult result = user.registerUser(r);
         assertNotNull(result);
@@ -27,7 +27,7 @@ public class UserServiceTest {
     }
 
     @Test
-    public void returnsPassedUsername() throws AlreadyTakenException {
+    public void returnsPassedUsername() throws Exception {
         String username = "elki";
         RegisterRequest r = new RegisterRequest(username, "password", "email");
         RegisterResult result = user.registerUser(r);
@@ -35,8 +35,18 @@ public class UserServiceTest {
     }
 
     @Test
+    public void registerRejectsEmptyFields() {
+        RegisterRequest r1 = new RegisterRequest("", "", "");
+        RegisterRequest r2 = new RegisterRequest("username", "", "");
+        RegisterRequest r3 = new RegisterRequest("username", "password", "");
+        assertThrows(IllegalArgumentException.class, () -> user.registerUser(r1));
+        assertThrows(IllegalArgumentException.class, () -> user.registerUser(r2));
+        assertThrows(IllegalArgumentException.class, () -> user.registerUser(r3));
+    }
+
+    @Test
     @DisplayName("Throws for repeat username only")
-    public void rejectsSameUsername() throws AlreadyTakenException {
+    public void rejectsSameUsername() throws Exception {
         String username1 = "gamer";
         String username2 = "gaming";
         RegisterRequest r1 = new RegisterRequest(username1, "pw", "email1");
@@ -48,10 +58,18 @@ public class UserServiceTest {
     }
 
     @Test
-    public void generatesAuthToken() throws AlreadyTakenException {
+    public void generatesAuthToken() throws Exception {
         RegisterRequest r = makeRegisterReq();
         RegisterResult result = user.registerUser(r);
         assertInstanceOf(UUID.class, UUID.fromString(result.authToken()));
+    }
+
+    @Test
+    public void loginRejectsEmptyFields() throws Exception{
+        LoginRequest r1 = new LoginRequest("", "");
+        LoginRequest r2 = new LoginRequest("username", "");
+        assertThrows(IllegalArgumentException.class, () -> user.loginUser(r1));
+        assertThrows(IllegalArgumentException.class, () -> user.loginUser(r2));
     }
 
     @Test
