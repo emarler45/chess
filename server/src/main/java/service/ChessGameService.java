@@ -27,7 +27,7 @@ public class ChessGameService {
             do {
                 gameID = ThreadLocalRandom.current().nextInt(1000, 10000);
             } while (gamesdao.getGame(gameID) != null);
-            gamesdao.insertGame(new GameData(null, null, gameID, r.gameName(), new ChessGame()));
+            gamesdao.insertGame(gameID, r.gameName());
         } else {
             throw new UnauthorizedException("Invalid Token");
         }

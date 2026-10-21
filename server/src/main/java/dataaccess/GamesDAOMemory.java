@@ -19,8 +19,8 @@ public class GamesDAOMemory implements GamesDAO {
     }
 
     @Override
-    public void insertGame(GameData data) {
-        dataList.add(data);
+    public void insertGame(int gameID, String gameName) {
+        GameData newGame = new GameData(null, null, gameID, gameName, new ChessGame());
     }
 
     @Override
