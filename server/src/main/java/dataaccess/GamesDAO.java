@@ -10,4 +10,5 @@ public interface GamesDAO {
     void updateGame(GameData data);
     int getNumOfGames();
     ArrayList<GameData> listGames();
+    void clearAll();
 }

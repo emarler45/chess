@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 public class AuthDAOMemory implements AuthDAO{
 
-    private final ArrayList<AuthData> dataList = new ArrayList<>();
+    private ArrayList<AuthData> dataList = new ArrayList<>();
 
     public AuthDAOMemory(){
         // test entry for use with clear
@@ -33,7 +33,7 @@ public class AuthDAOMemory implements AuthDAO{
         return dataList.contains(data);
     }
 
-    public int getNumOfAuths() {
-        return dataList.size();
+    public void clearAll(){
+        dataList = new ArrayList<>();
     }
 }

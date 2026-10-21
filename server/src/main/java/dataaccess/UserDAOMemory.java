@@ -8,7 +8,7 @@ import java.util.Objects;
 
 public class UserDAOMemory implements UserDAO {
 
-    private final ArrayList<UserData> dataList = new ArrayList<>();
+    private ArrayList<UserData> dataList = new ArrayList<>();
 
     public UserDAOMemory() {
         dataList.add(new UserData("username", "pw", "email"));
@@ -29,7 +29,7 @@ public class UserDAOMemory implements UserDAO {
         return null;
     }
 
-    public int getNumOfUsers(){
-        return dataList.size();
+    public void clearAll() {
+        dataList = new ArrayList<>();
     }
 }

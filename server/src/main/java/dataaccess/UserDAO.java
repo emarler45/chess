@@ -7,4 +7,5 @@ public interface UserDAO {
     void insertUser(UserData data);
     // Retrieves the UserData for a given username
     UserData getUserData(String username);
+    void clearAll();
 }

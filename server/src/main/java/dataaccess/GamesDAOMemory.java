@@ -42,4 +42,8 @@ public class GamesDAOMemory implements GamesDAO {
     public ArrayList<GameData> listGames(){
         return dataList;
     }
+
+    public void clearAll() {
+        dataList = new ArrayList<>();
+    }
 }
