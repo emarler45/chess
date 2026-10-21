@@ -15,13 +15,7 @@ public class GamesDAOMemory implements GamesDAO {
 
     @Override
     public void updateGame(GameData data) {
-        for (GameData currGame : dataList){
-            if (currGame.gameID() == data.gameID()){
-                dataList.remove(currGame);
-                dataList.add(data);
-                return;
-            }
-        }
+
     }
 
     @Override
@@ -30,8 +24,22 @@ public class GamesDAOMemory implements GamesDAO {
     }
 
     @Override
-    public void deleteGame() {
-        dataList = new ArrayList<>();
+    public void deleteGame(int gameID) {
+        GameData target = getGame(gameID);
+        if (target != null){
+            dataList.remove(gameID);
+        } else {
+            throw new DataNotFoundException("GameID %d not found!".formatted(gameID));
+        }
+    }
+
+    public GameData getGame(int gameID){
+        for (GameData currGame : dataList){
+            if (currGame.gameID() == gameID){
+                return currGame;
+            }
+        }
+        return null;
     }
 
     public int getNumOfGames(){

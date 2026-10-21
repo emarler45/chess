@@ -11,6 +11,6 @@ public class ClearServiceTest {
 
     @Test
     public void clearsAllUsers(){
-
+        clear.clearAll();
     }
 }
