@@ -22,4 +22,10 @@ public class GameServiceTest {
         CreateGameRequest r = new CreateGameRequest("mygame");
         assertThrows(UnauthorizedException.class, () -> service.createGame(badAuthToken, r));
     }
+
+    @Test
+    public void createRejectsEmptyName() {
+        CreateGameRequest r = new CreateGameRequest("");
+        assertThrows(IllegalArgumentException.class, () -> service.createGame("123e4567-e89b-12d3-a456-426614174000", r));
+    }
 }

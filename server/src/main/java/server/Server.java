@@ -76,10 +76,12 @@ public class Server {
             CreateGameRequest cgr = srlzr.fromJson(ctx.body(), CreateGameRequest.class);
             CreateGameResult response = game.createGame(authToken, cgr);
             handleSuccess(ctx, response);
+        } catch (IllegalArgumentException e) {
+            handleError(ctx, 400, e.getMessage());
         } catch (UnauthorizedException e) {
             handleError(ctx, 401, e.getMessage());
         } catch (Exception e) {
-
+            handleError(ctx, 500, e.getMessage());
         }
     }
 
