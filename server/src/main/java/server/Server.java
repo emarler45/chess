@@ -1,7 +1,10 @@
 package server;
 
 import dataaccess.DataNotFoundException;
+import handler.CreateGameResult;
 import handler.Handler;
+import handler.LoginResult;
+import handler.RegisterResult;
 import io.javalin.*;
 import io.javalin.http.Context;
 import service.*;

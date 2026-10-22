@@ -1,4 +1,4 @@
-package service;
+package handler;
 
 public record RegisterResult(
         String authToken,

@@ -1,11 +1,11 @@
 package service;
 
-import chess.ChessGame;
 import dataaccess.AuthDAO;
 import dataaccess.AuthDAOMemory;
 import dataaccess.GamesDAO;
 import dataaccess.GamesDAOMemory;
-import model.GameData;
+import handler.CreateGameRequest;
+import handler.CreateGameResult;
 
 import java.util.concurrent.ThreadLocalRandom;
 
