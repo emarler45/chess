@@ -128,6 +128,8 @@ public class ChessService {
         }
     }
 
+
+
     public void clearAll(){
         userdao.clearAll();
         gamesdao.clearAll();
