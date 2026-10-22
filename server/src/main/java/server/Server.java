@@ -26,7 +26,8 @@ public class Server {
                 .delete("/db", this::clearDB)
                 .post("/session", this::loginUser)
                 .delete("/session", this::logoutUser)
-                .post("/game", this::createGame);
+                .post("/game", this::createGame)
+                .get("/game", this::listGames);
 
         // Register your endpoints and exception handlers here.
 
@@ -77,6 +78,32 @@ public class Server {
             handleError(ctx, 400, e.getMessage());
         } catch (UnauthorizedException e) {
             handleError(ctx, 401, e.getMessage());
+        } catch (Exception e) {
+            handleError(ctx, 500, e.getMessage());
+        }
+    }
+
+    private void listGames(Context ctx) {
+        try{
+            ListGamesResult response = handler.listGames(ctx);
+            handleSuccess(ctx, response);
+        } catch (UnauthorizedException e) {
+            handleError(ctx, 401, e.getMessage());
+        }
+        catch (Exception e) {
+            handleError(ctx, 500, e.getMessage());
+        }
+    }
+
+    private void joinGame(Context ctx) {
+        try {
+            handler.joinGame(ctx);
+        } catch (IllegalArgumentException e) {
+            handleError(ctx, 400, e.getMessage());
+        } catch (UnauthorizedException e) {
+            handleError(ctx, 401, e.getMessage());
+        } catch (AlreadyTakenException e) {
+            handleError(ctx, 403, e.getMessage());
         } catch (Exception e) {
             handleError(ctx, 500, e.getMessage());
         }

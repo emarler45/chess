@@ -3,6 +3,9 @@ package service;
 import dataaccess.*;
 import model.*;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.ThreadLocalRandom;
 
@@ -85,6 +88,44 @@ public class ChessService {
             throw new UnauthorizedException("Invalid Token");
         }
         return new CreateGameResult(gameID);
+    }
+
+    public void joinGame(String authToken, JoinGameRequest r) throws Exception {
+        ArrayList<String> colors = new ArrayList<>(List.of("WHITE", "BLACK"));
+        if (authdao.verify(authToken)){
+            if (!colors.contains(r.playerColor())){
+                throw new IllegalArgumentException("Player color must be WHITE or BLACK.");
+            }
+            if (r.gameID() == 0){
+                throw new IllegalArgumentException("Game ID cannot be empty.");
+            }
+            GameData targetGame = gamesdao.getGame(r.gameID());
+            if (targetGame == null){
+                throw new DataNotFoundException("No game with ID %d found.".formatted(r.gameID()));
+            }
+            AuthData userAuth = authdao.getAuthData(authToken);
+            if (Objects.equals(r.playerColor(), "WHITE")){
+                if (targetGame.whiteUsername() != null){
+                    throw new AlreadyTakenException("WHITE is already taken.");
+                } else {
+                    gamesdao.updateGame(new GameData(
+                            userAuth.username(), targetGame.blackUsername(), targetGame.gameID(),
+                            targetGame.gameName(), targetGame.game()
+                    ));
+                }
+            } else {
+                if (targetGame.blackUsername() != null) {
+                    throw new AlreadyTakenException("BLACK is already taken.");
+                } else {
+                    gamesdao.updateGame(new GameData(
+                            targetGame.whiteUsername(), userAuth.username(), targetGame.gameID(),
+                            targetGame.gameName(), targetGame.game()
+                    ));
+                }
+            }
+        } else {
+            throw new UnauthorizedException("Invalid Token.");
+        }
     }
 
     public void clearAll(){

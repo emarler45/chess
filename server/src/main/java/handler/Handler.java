@@ -35,7 +35,15 @@ public class Handler {
         return service.createGame(authToken, cgr);
     }
 
+    public void joinGame(Context ctx) throws Exception {
+        String authToken = ctx.header("authorization");
+        JoinGameRequest r = srlzr.fromJson(ctx.body(), JoinGameRequest.class);
+        service.joinGame(authToken, r);
+    }
 
+    public ListGamesResult listGames(Context ctx) throws Exception {
+
+    }
 
     public void clearAll(){
         service.clearAll();
