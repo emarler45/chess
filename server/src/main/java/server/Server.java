@@ -27,7 +27,8 @@ public class Server {
                 .post("/session", this::loginUser)
                 .delete("/session", this::logoutUser)
                 .post("/game", this::createGame)
-                .get("/game", this::listGames);
+                .get("/game", this::listGames)
+                .put("/game", this::joinGame);
 
         // Register your endpoints and exception handlers here.
 

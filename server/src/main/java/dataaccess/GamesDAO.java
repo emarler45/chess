@@ -15,8 +15,8 @@ public interface GamesDAO {
     void updateGame(GameData data);
     // get total number of games in db
     int getNumOfGames();
-    // list the games in the db
-    ArrayList<GameData> listGames();
+    // return list of games in db
+    ArrayList<GameData> getGameList();
     // remove all games from the db
     void clearAll();
 }

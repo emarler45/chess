@@ -10,7 +10,7 @@ public class UserDAOMemory implements UserDAO {
     private ArrayList<UserData> dataList = new ArrayList<>();
 
     public UserDAOMemory() {
-        dataList.add(new UserData("username", "pw", "email"));
+//        dataList.add(new UserData("username", "pw", "email"));
     }
 
     @Override

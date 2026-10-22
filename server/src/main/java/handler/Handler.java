@@ -2,7 +2,10 @@ package handler;
 
 import com.google.gson.Gson;
 import io.javalin.http.Context;
+import model.GameData;
 import service.*;
+
+import java.util.ArrayList;
 
 public class Handler {
 
@@ -42,7 +45,9 @@ public class Handler {
     }
 
     public ListGamesResult listGames(Context ctx) throws Exception {
-
+        String authToken = ctx.header("authorization");
+        ArrayList<GameData> gameList = service.listGames(authToken);
+        return new ListGamesResult(gameList);
     }
 
     public void clearAll(){

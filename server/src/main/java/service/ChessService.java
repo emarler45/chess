@@ -11,14 +11,14 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class ChessService {
 
-    private UserDAO userdao;
-    private GamesDAO gamesdao;
-    private AuthDAO authdao;
+    private UserDAO userdao = new UserDAOMemory();
+    private GamesDAO gamesdao = new GamesDAOMemory();
+    private AuthDAO authdao = new AuthDAOMemory();
 
     public ChessService() {
-        UserDAO userdao = new UserDAOMemory();
-        GamesDAO gamesdao = new GamesDAOMemory();
-        AuthDAO authdao = new AuthDAOMemory();
+//        UserDAO userdao =
+//        GamesDAO gamesdao = ;
+//        AuthDAO authdao = ;
     }
 
     public ChessService(UserDAO users, GamesDAO games, AuthDAO auths) {
@@ -49,7 +49,7 @@ public class ChessService {
     }
 
     public LoginResult loginUser(LoginRequest r) throws Exception{
-        if (r.username().isEmpty() || r.password().isEmpty()){
+        if (r.username() == null || r.password() == null){
             throw new IllegalArgumentException("Username and password must not be empty.");
         }
         UserData foundData = userdao.getUserData(r.username());
@@ -128,7 +128,13 @@ public class ChessService {
         }
     }
 
-
+    public ArrayList<GameData> listGames(String token) throws Exception {
+        if (authdao.verify(token)){
+            return gamesdao.getGameList();
+        } else {
+            throw new UnauthorizedException("Invalid Token.");
+        }
+    }
 
     public void clearAll(){
         userdao.clearAll();

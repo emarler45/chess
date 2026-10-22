@@ -10,7 +10,7 @@ public class GamesDAOMemory implements GamesDAO {
     private ArrayList<GameData> dataList = new ArrayList<>();
 
     public GamesDAOMemory() {
-        dataList.add(new GameData("gamer", null, 1234, "newgame", new ChessGame()));
+//        dataList.add(new GameData("gamer", null, 1234, "newgame", new ChessGame()));
     }
 
     @Override
@@ -47,7 +47,7 @@ public class GamesDAOMemory implements GamesDAO {
     }
 
     @Override
-    public ArrayList<GameData> listGames(){
+    public ArrayList<GameData> getGameList(){
         return dataList;
     }
 
