@@ -1,6 +1,7 @@
 package server;
 
 import dataaccess.DataNotFoundException;
+import handler.Handler;
 import io.javalin.*;
 import io.javalin.http.Context;
 import service.*;
@@ -10,10 +11,8 @@ import java.util.Map;
 
 public class Server {
 
-    private final Gson srlzr = new Gson();
-
-
     private final Javalin javalin;
+    private final Handler handler = new Handler();
     private final ChessUserService user = new ChessUserService();
     private final ChessClearService clear = new ChessClearService();
     private final ChessGameService game = new ChessGameService();
@@ -32,8 +31,7 @@ public class Server {
 
     private void logoutUser(Context ctx){
         try {
-            LogoutRequest r = srlzr.fromJson(ctx.body(), LogoutRequest.class);
-            user.logoutUser(r);
+            handler.logout(ctx);
         } catch (UnauthorizedException e) {
             handleError(ctx, 401, e.getMessage());
         } catch (Exception e) {
@@ -43,8 +41,7 @@ public class Server {
 
     private void loginUser(Context ctx) {
         try {
-            LoginRequest r = srlzr.fromJson(ctx.body(), LoginRequest.class);
-            LoginResult response = user.loginUser(r);
+            LoginResult response = handler.login(ctx);
             handleSuccess(ctx, response);
         } catch (IllegalArgumentException | DataNotFoundException e){
             handleError(ctx, 400, e.getMessage());
@@ -59,8 +56,7 @@ public class Server {
 
     private void registerUser(Context ctx) {
         try {
-            RegisterRequest r = new Gson().fromJson(ctx.body(), RegisterRequest.class);
-            RegisterResult response = user.registerUser(r);
+            RegisterResult response = handler.register(ctx);
             handleSuccess(ctx, response);
         } catch (AlreadyTakenException e) {
             handleError(ctx, 403, e.getMessage());
@@ -72,9 +68,7 @@ public class Server {
 
     private void createGame(Context ctx) {
         try {
-            String authToken = ctx.header("authorization");
-            CreateGameRequest cgr = srlzr.fromJson(ctx.body(), CreateGameRequest.class);
-            CreateGameResult response = game.createGame(authToken, cgr);
+            CreateGameResult response = handler.createGame(ctx);
             handleSuccess(ctx, response);
         } catch (IllegalArgumentException e) {
             handleError(ctx, 400, e.getMessage());
@@ -100,12 +94,12 @@ public class Server {
 
     private void handleError(Context ctx, int code, String message){
         ctx.status(code);
-        ctx.result(srlzr.toJson(Map.of("message", "Error: %s".formatted(message))));
+        ctx.result(new Gson().toJson(Map.of("message", "Error: %s".formatted(message))));
     }
 
     private void handleSuccess(Context ctx, Record response){
         ctx.contentType("application/json");
-        var body = srlzr.toJson(response);
+        var body = new Gson().toJson(response);
         ctx.result(body);
     }
 
