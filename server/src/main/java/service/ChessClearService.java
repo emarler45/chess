@@ -10,9 +10,5 @@ public class ChessClearService {
 
     public ChessClearService(){}
 
-    public void clearAll(){
-        user.clearAll();
-        games.clearAll();
-        auth.clearAll();
-    }
+
 }

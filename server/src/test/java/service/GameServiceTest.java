@@ -6,7 +6,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class GameServiceTest {
 
-    private final ChessGameService service = new ChessGameService();
+    private final ChessService service = new ChessService();
 
     @Test
     public void returnsGameID() throws UnauthorizedException {

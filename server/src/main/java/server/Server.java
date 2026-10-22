@@ -1,10 +1,10 @@
 package server;
 
 import dataaccess.DataNotFoundException;
-import handler.CreateGameResult;
+import service.CreateGameResult;
 import handler.Handler;
-import handler.LoginResult;
-import handler.RegisterResult;
+import service.LoginResult;
+import service.RegisterResult;
 import io.javalin.*;
 import io.javalin.http.Context;
 import service.*;
@@ -84,7 +84,7 @@ public class Server {
 
     private void clearDB(Context ctx) {
         try {
-            clear.clearAll();
+            handler.clearAll();
         } catch (Exception e){
             handleError(ctx, 500, e.getMessage());
         }

@@ -1,4 +1,4 @@
-package handler;
+package service;
 
 public record RegisterRequest(
         String username,
