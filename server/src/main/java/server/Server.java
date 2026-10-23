@@ -63,6 +63,8 @@ public class Server {
         try {
             RegisterResult response = handler.register(ctx);
             handleSuccess(ctx, response);
+        } catch (IllegalArgumentException e) {
+            handleError(ctx, 400, e.getMessage());
         } catch (AlreadyTakenException e) {
             handleError(ctx, 403, e.getMessage());
         } catch (Exception e) {

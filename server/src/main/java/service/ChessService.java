@@ -28,7 +28,7 @@ public class ChessService {
     }
 
     public RegisterResult registerUser(RegisterRequest r) throws Exception {
-        if (r.username().isEmpty() || r.password().isEmpty() || r.email().isEmpty()){
+        if (r.username() == null || r.password() == null || r.email() == null){
             throw new IllegalArgumentException("All fields must be filled.");
         }
         String username = r.username();
@@ -54,7 +54,7 @@ public class ChessService {
         }
         UserData foundData = userdao.getUserData(r.username());
         if (foundData == null){
-            throw new DataNotFoundException("No user with name %s".formatted(r.username()));
+            throw new UnauthorizedException("No user with name %s".formatted(r.username()));
         } else {
             if (foundData.password().equals(r.password())) {
                 AuthData newAuth = generateAuth(r.username());
@@ -66,28 +66,32 @@ public class ChessService {
         }
     }
 
-    public void logoutUser(LogoutRequest r) throws UnauthorizedException{
-        if (authdao.verify(r.authToken())) {
-            authdao.deleteData(r.authToken());
+    public void logoutUser(String token) throws UnauthorizedException{
+        if (authdao.verify(token)) {
+            authdao.deleteData(token);
         } else {
             throw new UnauthorizedException("Token not found.");
         }
     }
 
-    public CreateGameResult createGame(String token, CreateGameRequest r) throws UnauthorizedException{
-        if (r.gameName().isEmpty()){
-            throw new IllegalArgumentException("Game name must not be blank.");
-        }
-        int gameID = 0;
-        if (authdao.verify(token)){
-            do {
-                gameID = ThreadLocalRandom.current().nextInt(1000, 10000);
-            } while (gamesdao.getGame(gameID) != null);
-            gamesdao.createGame(gameID, r.gameName());
+    public CreateGameResult createGame(String token, CreateGameRequest r) throws UnauthorizedException {
+        if (authdao.verify(token)) {
+            if (r.gameName() == null) {
+                throw new IllegalArgumentException("Game name must not be blank.");
+            }
+            int gameID = 0;
+            if (authdao.verify(token)) {
+                do {
+                    gameID = ThreadLocalRandom.current().nextInt(1000, 10000);
+                } while (gamesdao.getGame(gameID) != null);
+                gamesdao.createGame(gameID, r.gameName());
+            } else {
+                throw new UnauthorizedException("Invalid Token");
+            }
+            return new CreateGameResult(gameID);
         } else {
-            throw new UnauthorizedException("Invalid Token");
+            throw new UnauthorizedException("Invalid token,");
         }
-        return new CreateGameResult(gameID);
     }
 
     public void joinGame(String authToken, JoinGameRequest r) throws Exception {

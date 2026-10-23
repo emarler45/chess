@@ -23,8 +23,8 @@ public class Handler {
     }
 
     public void logout(Context ctx) throws Exception{
-        LogoutRequest r = srlzr.fromJson(ctx.body(), LogoutRequest.class);
-        service.logoutUser(r);
+        String token = ctx.header("authorization");
+        service.logoutUser(token);
     }
 
     public RegisterResult register(Context ctx) throws Exception{

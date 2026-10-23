@@ -97,14 +97,13 @@ public class UserServiceTest {
     @Test
     public void logoutUser() throws Exception{
         RegisterResult r = service.registerUser(new RegisterRequest("username", "pw", "email"));
-        LogoutRequest logr = new LogoutRequest(r.authToken());
-        service.logoutUser(logr);
+        service.logoutUser(r.authToken());
     }
 
     @Test
     public void logoutBadToken() {
-        LogoutRequest r = new LogoutRequest("123e4567-e89b-12d3-a456-426614174001");
-        assertThrows(UnauthorizedException.class, () -> service.logoutUser(r));
+        String badToken = "123e4567-e89b-12d3-a456-426614174001";
+        assertThrows(UnauthorizedException.class, () -> service.logoutUser(badToken));
     }
 
 }
