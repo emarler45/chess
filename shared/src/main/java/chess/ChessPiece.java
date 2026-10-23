@@ -51,10 +51,9 @@ public class ChessPiece {
         ArrayList<ChessMove> movesToReturn = new ArrayList<>();
         for (int i = -1; i <= 1; i++) {
             int endRow = i+startRow;
-            if (endRow <= 8 && endRow >= 1) {
                 for (int j = -1; j <= 1; j++) {
                     int endCol = j+startCol;
-                    if (endCol <= 8 && endCol >= 1) {
+                    if (endCol <= 8 && endCol >= 1 && endRow <= 8 && endRow >= 1) {
                         ChessPiece destinationPiece = board.getPiece(new ChessPosition(endRow, endCol));
                         if (destinationPiece == null || destinationPiece.getTeamColor() != getTeamColor()){
                             movesToReturn.add(new ChessMove(myPosition, new ChessPosition(startRow + i, startCol + j), null));
@@ -62,7 +61,6 @@ public class ChessPiece {
                     }
                 }
             }
-        }
         return movesToReturn;
     }
 
@@ -206,17 +204,16 @@ public class ChessPiece {
                 for (int k = 1; k < 8; k++){
                     if (startRow + k*i < 1 || startRow + k*i > 8 || startCol + k*j < 1 || startCol + k*j > 8){
                         break;
+                    }
+                    ChessPosition targetPos = new ChessPosition(startRow + k * i, startCol + k * j);
+                    ChessPiece targetPiece = board.getPiece(targetPos);
+                    if (targetPiece == null) {
+                        movesToReturn.add(new ChessMove(myPosition, targetPos, null));
+                    } else if (targetPiece.getTeamColor() == getTeamColor()){
+                        break;
                     } else {
-                        ChessPosition targetPos = new ChessPosition(startRow + k * i, startCol + k * j);
-                        ChessPiece targetPiece = board.getPiece(targetPos);
-                        if (targetPiece == null) {
-                            movesToReturn.add(new ChessMove(myPosition, targetPos, null));
-                        } else if (targetPiece.getTeamColor() == getTeamColor()){
-                            break;
-                        } else {
-                            movesToReturn.add(new ChessMove(myPosition, targetPos, null));
-                            break;
-                        }
+                        movesToReturn.add(new ChessMove(myPosition, targetPos, null));
+                        break;
                     }
                 }
             }

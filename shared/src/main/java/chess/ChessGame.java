@@ -84,7 +84,7 @@ public class ChessGame {
      */
     public Collection<ChessMove> validMoves(ChessPosition startPosition) {
         ChessPiece currPiece = board.getPiece(startPosition);
-        if (currPiece == null) return null;
+        if (currPiece == null) {return null;}
         Collection<ChessMove> allMoves = currPiece.pieceMoves(board, startPosition);
         allMoves.removeIf(currMove -> !testMove(currMove, currPiece));
         return allMoves;
@@ -133,7 +133,7 @@ public class ChessGame {
         ChessPosition start = move.getStartPosition();
         ChessPosition end = move.getEndPosition();
         ChessPiece pieceToMove = board.getPiece(start);
-        if (pieceToMove == null || pieceToMove.getTeamColor() != currTeam) throw new InvalidMoveException();
+        if (pieceToMove == null || pieceToMove.getTeamColor() != currTeam) {throw new InvalidMoveException();}
         Collection<ChessMove> validList = validMoves(start);
         if (validList.contains(move)){
             board.removePiece(start);
@@ -149,7 +149,7 @@ public class ChessGame {
             } else {
                 board.addPiece(end, pieceToMove);
             }
-        } else throw new InvalidMoveException();
+        } else {throw new InvalidMoveException();}
         if (currTeam == TeamColor.WHITE){
             if (pieceToMove.getPieceType() == ChessPiece.PieceType.KING){
                 whiteKingPos = end;

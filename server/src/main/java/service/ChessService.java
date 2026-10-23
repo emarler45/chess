@@ -16,16 +16,8 @@ public class ChessService {
     private AuthDAO authdao = new AuthDAOMemory();
 
     public ChessService() {
-//        UserDAO userdao =
-//        GamesDAO gamesdao = ;
-//        AuthDAO authdao = ;
     }
 
-//    public ChessService(UserDAO users, GamesDAO games, AuthDAO auths) {
-//        userdao = users;
-//        gamesdao = games;
-//        authdao = auths;
-//    }
 
     public RegisterResult registerUser(RegisterRequest r) throws Exception {
         if (r.username() == null || r.password() == null || r.email() == null
@@ -138,9 +130,11 @@ public class ChessService {
             ArrayList<GameData> gamesList = gamesdao.getGameList();
             ArrayList<GameInfo> gameInfoList = new ArrayList<>();
             for (GameData game : gamesList){
-                String whiteUser = (game.whiteUsername() == null) ? "null" : game.whiteUsername();
-                String blackUser = (game.blackUsername() == null) ? "null" : game.blackUsername();
-                gameInfoList.add(new GameInfo(game.gameID(), whiteUser, blackUser, game.gameName()));
+//                String whiteUser = (game.whiteUsername() == null) ? "null" : game.whiteUsername();
+//                String blackUser = (game.blackUsername() == null) ? "null" : game.blackUsername();
+//                gameInfoList.add(new GameInfo(game.gameID(), whiteUser, blackUser, game.gameName()));
+                gameInfoList.add(new GameInfo(game.gameID(), game.whiteUsername(), game.blackUsername(), game.gameName()));
+
             }
             return gameInfoList;
         } else {
