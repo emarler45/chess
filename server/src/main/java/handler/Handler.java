@@ -46,7 +46,7 @@ public class Handler {
 
     public ListGamesResult listGames(Context ctx) throws Exception {
         String authToken = ctx.header("authorization");
-        ArrayList<GameData> gameList = service.listGames(authToken);
+        ArrayList<Record> gameList = service.listGames(authToken);
         return new ListGamesResult(gameList);
     }
 

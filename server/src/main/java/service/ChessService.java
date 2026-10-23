@@ -28,7 +28,8 @@ public class ChessService {
     }
 
     public RegisterResult registerUser(RegisterRequest r) throws Exception {
-        if (r.username() == null || r.password() == null || r.email() == null){
+        if (r.username() == null || r.password() == null || r.email() == null
+            || r.username().isEmpty() || r.password().isEmpty() || r.email().isEmpty()){
             throw new IllegalArgumentException("All fields must be filled.");
         }
         String username = r.username();
@@ -76,7 +77,7 @@ public class ChessService {
 
     public CreateGameResult createGame(String token, CreateGameRequest r) throws UnauthorizedException {
         if (authdao.verify(token)) {
-            if (r.gameName() == null) {
+            if (r.gameName() == null || r.gameName().isEmpty()) {
                 throw new IllegalArgumentException("Game name must not be blank.");
             }
             int gameID = 0;
@@ -132,9 +133,22 @@ public class ChessService {
         }
     }
 
-    public ArrayList<GameData> listGames(String token) throws Exception {
+    public ArrayList<Record> listGames(String token) throws Exception {
         if (authdao.verify(token)){
-            return gamesdao.getGameList();
+            record GameInfo (
+                    int gameID,
+                    String whiteUsername,
+                    String blackUsername,
+                    String gameName
+            ){}
+            ArrayList<GameData> gamesList = gamesdao.getGameList();
+            ArrayList<Record> gameInfoList = new ArrayList<>();
+            for (GameData game : gamesList){
+                String whiteUser = (game.whiteUsername() == null) ? "null" : game.whiteUsername();
+                String blackUser = (game.blackUsername() == null) ? "null" : game.blackUsername();
+                gameInfoList.add(new GameInfo(game.gameID(), whiteUser, blackUser, game.gameName()));
+            }
+            return gameInfoList;
         } else {
             throw new UnauthorizedException("Invalid Token.");
         }

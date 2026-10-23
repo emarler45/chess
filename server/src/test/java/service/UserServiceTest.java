@@ -84,7 +84,7 @@ public class UserServiceTest {
     @Test
     public void attemptLoginFakeUsername(){
         LoginRequest r = new LoginRequest("gaming", "pw");
-        assertThrows(DataNotFoundException.class, () -> service.loginUser(r));
+        assertThrows(UnauthorizedException.class, () -> service.loginUser(r));
     }
 
     @Test

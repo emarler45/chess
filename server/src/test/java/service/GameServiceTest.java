@@ -32,9 +32,10 @@ public class GameServiceTest {
     }
 
     @Test
-    public void createRejectsEmptyName() {
+    public void createRejectsEmptyName() throws Exception {
+        String token = registerUser("hilol");
         CreateGameRequest r = new CreateGameRequest("");
-        assertThrows(IllegalArgumentException.class, () -> service.createGame("123e4567-e89b-12d3-a456-426614174000", r));
+        assertThrows(IllegalArgumentException.class, () -> service.createGame(token, r));
     }
 
     public int joinAsBothColors() throws Exception{
