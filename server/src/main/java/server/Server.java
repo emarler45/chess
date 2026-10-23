@@ -16,9 +16,6 @@ public class Server {
 
     private final Javalin javalin;
     private final Handler handler = new Handler();
-    private final ChessUserService user = new ChessUserService();
-    private final ChessClearService clear = new ChessClearService();
-    private final ChessGameService game = new ChessGameService();
 
     public Server() {
         javalin = Javalin.create(config -> config.staticFiles.add("web"))

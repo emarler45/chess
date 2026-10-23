@@ -4,6 +4,8 @@ import dataaccess.DataNotFoundException;
 import model.GameData;
 import org.junit.jupiter.api.Test;
 
+import java.util.ArrayList;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class GameServiceTest {
@@ -80,8 +82,14 @@ public class GameServiceTest {
 
     @Test
     public void listGamesNoError() throws Exception {
-        String token = registerUser("username");
-        service.listGames(token);
+        String token = registerUser("gamer");
+        int gameID = joinAsWhite();
+        ListGamesResult resp = new ListGamesResult(service.listGames(token));
+        GameInfo expInfo = new GameInfo(gameID, "username", "null", "nameofgame");
+        ArrayList<GameInfo> expList = new ArrayList<>();
+        expList.add(expInfo);
+        ListGamesResult exp = new ListGamesResult(expList);
+        assertEquals(exp, resp);
     }
 
     @Test

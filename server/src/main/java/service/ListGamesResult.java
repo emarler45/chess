@@ -5,6 +5,6 @@ import model.GameData;
 import java.util.ArrayList;
 
 public record ListGamesResult(
-        ArrayList<Record> games
+        ArrayList<GameInfo> games
 ) {
 }
