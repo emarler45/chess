@@ -20,12 +20,12 @@ public class ChessBoard {
     }
 
     public ChessBoard(ChessBoard board) {
-        this.squares = board.squares;
-//       for (int i = 1; i <= 8; i++){
-//           for (int j = 1; j <= 8; j++){
-//               this.addPiece(new ChessPosition(i, j), board.getPiece(new ChessPosition(i, j)));
-//           }
-//       }
+//        this.squares = board.squares;
+       for (int i = 1; i <= 8; i++){
+           for (int j = 1; j <= 8; j++){
+               this.addPiece(new ChessPosition(i, j), board.getPiece(new ChessPosition(i, j)));
+           }
+       }
     }
 
     /**
