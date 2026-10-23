@@ -16,10 +16,11 @@ public class GameServiceTest {
     }
 
     @Test
-    public void returnsGameID() throws UnauthorizedException {
+    public void returnsGameID() throws Exception {
+        String token = registerUser("username");
         CreateGameRequest r = new CreateGameRequest("mygame");
-        CreateGameResult result = service.createGame("123e4567-e89b-12d3-a456-426614174000", r);
-        assertInstanceOf(int.class, result.gameID());
+        CreateGameResult result = service.createGame(token, r);
+        assertInstanceOf(Integer.class, result.gameID());
         assertNotEquals(0, result.gameID());
     }
 
@@ -65,15 +66,28 @@ public class GameServiceTest {
     @Test
     public void rejectsTakenSlot() throws Exception{
         int gameID = joinAsBothColors();
-        String token = registerUser("username");
+        String token = registerUser("gamer");
         assertThrows(AlreadyTakenException.class, () -> service.joinGame(token, new JoinGameRequest("WHITE", gameID)));
         assertThrows(AlreadyTakenException.class, () -> service.joinGame(token, new JoinGameRequest("BLACK", gameID)));
     }
 
     @Test
-    public void rejectsBadToken() throws Exception {
+    public void joinRejectsBadToken() throws Exception {
         int gameID = joinAsWhite();
         assertThrows(UnauthorizedException.class, () -> service.joinGame("bad token", new JoinGameRequest("BLACK", gameID)));
+    }
+
+    @Test
+    public void listGamesNoError() throws Exception {
+        String token = registerUser("username");
+        service.listGames(token);
+    }
+
+    @Test
+    public void listRejectsBadToken() throws Exception {
+        String token = registerUser("username");
+        service.listGames(token);
+        assertThrows(UnauthorizedException.class, () -> service.listGames("badtoken"));
     }
 
 }

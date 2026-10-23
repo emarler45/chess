@@ -66,14 +66,15 @@ public class UserServiceTest {
 
     @Test
     public void loginRejectsEmptyFields() throws Exception{
-        LoginRequest r1 = new LoginRequest("", "");
-        LoginRequest r2 = new LoginRequest("username", "");
+        LoginRequest r1 = new LoginRequest(null, null);
+        LoginRequest r2 = new LoginRequest("username", null);
         assertThrows(IllegalArgumentException.class, () -> service.loginUser(r1));
         assertThrows(IllegalArgumentException.class, () -> service.loginUser(r2));
     }
 
     @Test
     public void attemptUserLogin() throws Exception {
+        service.registerUser(new RegisterRequest("username", "pw", "email"));
         LoginRequest r = new LoginRequest("username", "pw");
         LoginResult result = service.loginUser(r);
         assertEquals("username", result.username());
@@ -87,15 +88,17 @@ public class UserServiceTest {
     }
 
     @Test
-    public void attemptLoginWrongPassword(){
+    public void attemptLoginWrongPassword() throws Exception {
+        service.registerUser(new RegisterRequest("username", "password", "email"));
         LoginRequest r = new LoginRequest("username", "pass");
         assertThrows(UnauthorizedException.class, () -> service.loginUser(r));
     }
 
     @Test
-    public void logoutUser() throws UnauthorizedException{
-        LogoutRequest r = new LogoutRequest("123e4567-e89b-12d3-a456-426614174000");
-        service.logoutUser(r);
+    public void logoutUser() throws Exception{
+        RegisterResult r = service.registerUser(new RegisterRequest("username", "pw", "email"));
+        LogoutRequest logr = new LogoutRequest(r.authToken());
+        service.logoutUser(logr);
     }
 
     @Test

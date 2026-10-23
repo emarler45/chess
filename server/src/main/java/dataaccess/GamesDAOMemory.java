@@ -14,20 +14,26 @@ public class GamesDAOMemory implements GamesDAO {
     }
 
     @Override
-    public void updateGame(GameData data) {
-
+    public void updateGame(GameData data) throws Exception {
+        deleteGame(data.gameID());
+        insertGame(data);
     }
 
     @Override
-    public void insertGame(int gameID, String gameName) {
+    public void createGame(int gameID, String gameName) {
         GameData newGame = new GameData(null, null, gameID, gameName, new ChessGame());
+        dataList.add(newGame);
+    }
+
+    public void insertGame(GameData game) {
+        dataList.add(game);
     }
 
     @Override
     public void deleteGame(int gameID) throws DataNotFoundException {
         GameData target = getGame(gameID);
         if (target != null){
-            dataList.remove(gameID);
+            dataList.remove(target);
         } else {
             throw new DataNotFoundException("GameID %d not found!".formatted(gameID));
         }
