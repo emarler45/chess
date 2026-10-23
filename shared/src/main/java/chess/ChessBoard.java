@@ -42,13 +42,7 @@ public class ChessBoard {
         squares[position.getRow()-1][position.getColumn()-1] = null;
     }
 
-    public void movePiece(ChessMove move){
-        ChessPosition startPos = move.getStartPosition();
-        ChessPosition endPos = move.getEndPosition();
-        ChessPiece pieceToMove = getPiece(startPos);
-        addPiece(endPos, pieceToMove);
-        removePiece(startPos);
-    }
+
     /**
      * Gets a chess piece on the chessboard
      *
