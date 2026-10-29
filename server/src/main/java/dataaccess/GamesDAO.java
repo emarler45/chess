@@ -13,8 +13,6 @@ public interface GamesDAO {
     GameData getGame(int gameID);
     // change record with matching GameData.gameID with data
     void updateGame(GameData data) throws Exception;
-    // get total number of games in db
-    int getNumOfGames();
     // return list of games in db
     ArrayList<GameData> getGameList();
     // remove all games from the db

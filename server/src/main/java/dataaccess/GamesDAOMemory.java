@@ -48,10 +48,6 @@ public class GamesDAOMemory implements GamesDAO {
         return null;
     }
 
-    public int getNumOfGames(){
-        return dataList.size();
-    }
-
     @Override
     public ArrayList<GameData> getGameList(){
         return dataList;
