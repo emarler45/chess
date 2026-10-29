@@ -4,7 +4,7 @@ import model.AuthData;
 
 public interface AuthDAO {
     // insert AuthData into db
-    void insertData(AuthData auth);
+    void insertData(AuthData auth) throws DataAccessException;
     // retrieve AuthData from db
     AuthData getAuthData(String authToken);
     // check if authToken is present in db

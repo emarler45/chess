@@ -27,7 +27,51 @@ public class DatabaseManager {
         } catch (SQLException ex) {
             throw new DataAccessException("failed to create database", ex);
         }
+    }
 
+    static private final String[] TABLE_STATEMENTS = {
+            """
+            CREATE TABLE IF NOT EXISTS users (
+            `username` VARCHAR(256) NOT NULL,
+            `password` VARCHAR(256) NOT NULL,
+            `email` VARCHAR(256) NOT NULL,
+            PRIMARY KEY (username),
+            INDEX(username),
+            INDEX(password)
+            )
+            """,
+            """
+            CREATE TABLE IF NOT EXISTS auths (
+            `token` VARCHAR(256) NOT NULL,
+            `username` VARCHAR(256) NOT NULL,
+            PRIMARY KEY (token),
+            FOREIGN KEY (username)
+            )
+            """,
+            """
+            CREATE TABLE IF NOT EXISTS games (
+            `id` INT NOT NULL AUTO_INCREMENT,
+            `name` VARCHAR(256) NOT NULL,
+            `white` VARCHAR(256) DEFAULT NULL,
+            `black` VARCHAR(256) DEFAULT NULL,
+            `game` TEXT DEFAULT NULL
+            PRIMARY KEY (id),
+            FOREIGN KEY (white),
+            FOREIGN KEY (black),
+            INDEX(name)
+            """
+    };
+
+    static public void createTables() throws DataAccessException{
+        try (var conn = DriverManager.getConnection(connectionUrl, dbUsername, dbPassword)){
+            for (String statement : TABLE_STATEMENTS){
+                try (var prepStatement = conn.prepareStatement(statement)) {
+                    prepStatement.executeUpdate();
+                }
+            }
+        } catch (SQLException ex) {
+            throw new DataAccessException("failed to create database", ex);
+        }
     }
 
     /**
