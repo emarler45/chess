@@ -18,7 +18,7 @@ public class AuthDAODBTests {
     }
 
     @AfterEach
-    public void clearDB() {
+    public void clearDB() throws DataAccessException {
         authdao.clearAll();
     }
 
@@ -53,7 +53,7 @@ public class AuthDAODBTests {
         AuthData data = new AuthData("realToken", "gamer");
         authdao.insertData(data);
         assert(authdao.verify("realToken"));
-        assertFalse(authdao.verify("fakeToken"));
+        assertThrows(UnauthorizedException.class, () -> authdao.verify("fakeToken"));
     }
 
 }

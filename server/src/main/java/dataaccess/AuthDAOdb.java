@@ -51,9 +51,9 @@ public class AuthDAOdb implements AuthDAO {
     }
 
     @Override
-    public void clearAll() {
-
-
+    public void clearAll() throws DataAccessException {
+        String statement = "TRUNCATE auths";
+        executeStatement(statement);
     }
 
     public void executeStatement(String statement, String... params) throws DataAccessException {

@@ -1,5 +1,6 @@
 package service;
 
+import dataaccess.DataAccessException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
@@ -10,7 +11,7 @@ public class ClearServiceTest {
     private final ChessService clear = new ChessService();
 
     @Test
-    public void clearsAllUsers(){
+    public void clearsAllUsers() throws DataAccessException {
         clear.clearAll();
     }
 }

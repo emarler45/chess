@@ -1,6 +1,7 @@
 package handler;
 
 import com.google.gson.Gson;
+import dataaccess.DataAccessException;
 import io.javalin.http.Context;
 import model.GameData;
 import service.*;
@@ -50,7 +51,7 @@ public class Handler {
         return new ListGamesResult(gameList);
     }
 
-    public void clearAll(){
+    public void clearAll() throws DataAccessException {
         service.clearAll();
     }
 }

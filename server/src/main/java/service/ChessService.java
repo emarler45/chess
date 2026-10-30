@@ -151,7 +151,7 @@ public class ChessService {
         }
     }
 
-    public void clearAll(){
+    public void clearAll() throws DataAccessException {
         userdao.clearAll();
         gamesdao.clearAll();
         authdao.clearAll();
