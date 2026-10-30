@@ -1,7 +1,9 @@
 package dataaccess;
 
 import model.AuthData;
+import service.UnauthorizedException;
 
+import javax.xml.crypto.Data;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -14,26 +16,33 @@ public class AuthDAOdb implements AuthDAO {
 
     @Override
     public void insertData(AuthData auth) throws DataAccessException {
+        String statement = "INSERT INTO auths (token, username) VALUES (?, ?)";
+        executeStatement(statement, auth.authToken(), auth.username());
+    }
+
+    @Override
+    public AuthData getAuthData(String authToken) throws Exception {
         try (var conn = DatabaseManager.getConnection()) {
-            try (var insertStatement = conn.prepareStatement("INSERT INTO auth (token, username) VALUES (?, ?)")){
-                insertStatement.setString(1, auth.authToken());
-                insertStatement.setString(2, auth.username());
-                insertStatement.executeUpdate();
+            String statement = "SELECT * FROM auths WHERE token = ?";
+            try (var prepStatement = conn.prepareStatement(statement)){
+                prepStatement.setString(1, authToken);
+                try (ResultSet resSet = prepStatement.executeQuery()) {
+                    if (resSet.next()){
+                        String username = resSet.getString("username");
+                        return new AuthData(authToken, username);
+                    } else {
+                        throw new UnauthorizedException("Invalid token.");
+                    }
+                }
             }
-        } catch (SQLException e) {
-            throw new DataAccessException("Error inserting into database: %s".formatted(e.getMessage()));
+        } catch (SQLException sqle) {
+            throw new DataAccessException("Error retrieving from database.");
         }
-
     }
 
     @Override
-    public AuthData getAuthData(String authToken) {
-        return null;
-    }
-
-    @Override
-    public boolean verify(String token) {
-        return false;
+    public boolean verify(String token) throws Exception {
+        return getAuthData(token) != null;
     }
 
     @Override
@@ -43,6 +52,7 @@ public class AuthDAOdb implements AuthDAO {
 
     @Override
     public void clearAll() {
+
 
     }
 
@@ -56,7 +66,7 @@ public class AuthDAOdb implements AuthDAO {
                 prepStatement.executeUpdate();
             }
         } catch (SQLException sqle){
-            throw new DataAccessException("Unable to update database");
+            throw new DataAccessException("Unable to update database: %s".formatted(sqle.getMessage()));
         }
     }
 

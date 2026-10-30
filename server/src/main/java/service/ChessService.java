@@ -68,7 +68,7 @@ public class ChessService {
         }
     }
 
-    public void logoutUser(String token) throws UnauthorizedException{
+    public void logoutUser(String token) throws Exception {
         if (authdao.verify(token)) {
             authdao.deleteData(token);
         } else {
@@ -76,7 +76,7 @@ public class ChessService {
         }
     }
 
-    public CreateGameResult createGame(String token, CreateGameRequest r) throws UnauthorizedException {
+    public CreateGameResult createGame(String token, CreateGameRequest r) throws Exception {
         if (authdao.verify(token)) {
             if (r.gameName() == null || r.gameName().isEmpty()) {
                 throw new IllegalArgumentException("Game name must not be blank.");
