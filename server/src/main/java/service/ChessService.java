@@ -11,11 +11,20 @@ import java.util.concurrent.ThreadLocalRandom;
 
 public class ChessService {
 
-    private UserDAO userdao = new UserDAOMemory();
-    private GamesDAO gamesdao = new GamesDAOMemory();
-    private AuthDAO authdao = new AuthDAOMemory();
+    private UserDAO userdao;
+    private GamesDAO gamesdao;
+    private AuthDAO authdao;
 
     public ChessService() {
+        authdao = new AuthDAOMemory();
+        gamesdao = new GamesDAOMemory();
+        userdao = new UserDAOMemory();
+    }
+
+    public ChessService(UserDAO u, GamesDAO g, AuthDAO a){
+        userdao = u;
+        gamesdao = g;
+        authdao = a;
     }
 
 

@@ -46,6 +46,20 @@ public class AuthDAOdb implements AuthDAO {
 
     }
 
+    public void executeStatement(String statement, String... params) throws DataAccessException {
+        try (var conn = DatabaseManager.getConnection()) {
+            try (var prepStatement = conn.prepareStatement(statement)) {
+                for (int i = 0; i < params.length; i++){
+                    String param = params[i];
+                    prepStatement.setString(i+1, param);
+                }
+                prepStatement.executeUpdate();
+            }
+        } catch (SQLException sqle){
+            throw new DataAccessException("Unable to update database");
+        }
+    }
+
     public void configureDatabase() throws DataAccessException {
         DatabaseManager.createDatabase();
         DatabaseManager.createTables();

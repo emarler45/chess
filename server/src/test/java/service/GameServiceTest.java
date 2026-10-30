@@ -1,7 +1,6 @@
 package service;
 
-import dataaccess.DataNotFoundException;
-import model.GameData;
+import dataaccess.*;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -10,10 +9,13 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class GameServiceTest {
 
-    private final ChessService service = new ChessService();
+    private final ChessService servicemem = new ChessService(new UserDAOMemory(), new GamesDAOMemory(), new AuthDAOMemory());
+
+    public GameServiceTest() throws DataAccessException {
+    }
 
     private String registerUser(String username) throws Exception {
-        RegisterResult resp = service.registerUser(new RegisterRequest(username, "password", "email"));
+        RegisterResult resp = servicemem.registerUser(new RegisterRequest(username, "password", "email"));
         return resp.authToken();
     }
 
@@ -21,7 +23,7 @@ public class GameServiceTest {
     public void returnsGameID() throws Exception {
         String token = registerUser("username");
         CreateGameRequest r = new CreateGameRequest("mygame");
-        CreateGameResult result = service.createGame(token, r);
+        CreateGameResult result = servicemem.createGame(token, r);
         assertInstanceOf(Integer.class, result.gameID());
         assertNotEquals(0, result.gameID());
     }
@@ -30,61 +32,61 @@ public class GameServiceTest {
     public void attemptCreateUnauthorized() {
         String badAuthToken = "023e4567-e89b-12d3-a456-426614174001";
         CreateGameRequest r = new CreateGameRequest("mygame");
-        assertThrows(UnauthorizedException.class, () -> service.createGame(badAuthToken, r));
+        assertThrows(UnauthorizedException.class, () -> servicemem.createGame(badAuthToken, r));
     }
 
     @Test
     public void createRejectsEmptyName() throws Exception {
         String token = registerUser("hilol");
         CreateGameRequest r = new CreateGameRequest("");
-        assertThrows(IllegalArgumentException.class, () -> service.createGame(token, r));
+        assertThrows(IllegalArgumentException.class, () -> servicemem.createGame(token, r));
     }
 
     public int joinAsBothColors() throws Exception{
         String token = registerUser("username");
         String token2 = registerUser("nameuser");
-        CreateGameResult r = service.createGame(token, new CreateGameRequest("nameofgame"));
-        service.joinGame(token, new JoinGameRequest("WHITE", r.gameID()));
-        service.joinGame(token2, new JoinGameRequest("BLACK", r.gameID()));
+        CreateGameResult r = servicemem.createGame(token, new CreateGameRequest("nameofgame"));
+        servicemem.joinGame(token, new JoinGameRequest("WHITE", r.gameID()));
+        servicemem.joinGame(token2, new JoinGameRequest("BLACK", r.gameID()));
         return r.gameID();
     }
     public int joinAsWhite() throws Exception{
         String token = registerUser("username");
-        CreateGameResult r = service.createGame(token, new CreateGameRequest("nameofgame"));
-        service.joinGame(token, new JoinGameRequest("WHITE", r.gameID()));
+        CreateGameResult r = servicemem.createGame(token, new CreateGameRequest("nameofgame"));
+        servicemem.joinGame(token, new JoinGameRequest("WHITE", r.gameID()));
         return r.gameID();
     }
 
     @Test
     public void rejectsBadRequests() throws Exception{
         String token = registerUser("username");
-        CreateGameResult r = service.createGame(token, new CreateGameRequest("nameofgame"));
-        assertThrows(IllegalArgumentException.class, () -> service.joinGame(token, new JoinGameRequest("", r.gameID())));
-        assertThrows(IllegalArgumentException.class, () -> service.joinGame(token, new JoinGameRequest("HI", r.gameID())));
-        assertThrows(IllegalArgumentException.class, () -> service.joinGame(token, new JoinGameRequest("white", r.gameID())));
-        assertThrows(IllegalArgumentException.class, () -> service.joinGame(token, new JoinGameRequest("WHITE", 0)));
-        assertThrows(DataNotFoundException.class, () -> service.joinGame(token, new JoinGameRequest("BLACK", 1234)));
+        CreateGameResult r = servicemem.createGame(token, new CreateGameRequest("nameofgame"));
+        assertThrows(IllegalArgumentException.class, () -> servicemem.joinGame(token, new JoinGameRequest("", r.gameID())));
+        assertThrows(IllegalArgumentException.class, () -> servicemem.joinGame(token, new JoinGameRequest("HI", r.gameID())));
+        assertThrows(IllegalArgumentException.class, () -> servicemem.joinGame(token, new JoinGameRequest("white", r.gameID())));
+        assertThrows(IllegalArgumentException.class, () -> servicemem.joinGame(token, new JoinGameRequest("WHITE", 0)));
+        assertThrows(DataNotFoundException.class, () -> servicemem.joinGame(token, new JoinGameRequest("BLACK", 1234)));
     }
 
     @Test
     public void rejectsTakenSlot() throws Exception{
         int gameID = joinAsBothColors();
         String token = registerUser("gamer");
-        assertThrows(AlreadyTakenException.class, () -> service.joinGame(token, new JoinGameRequest("WHITE", gameID)));
-        assertThrows(AlreadyTakenException.class, () -> service.joinGame(token, new JoinGameRequest("BLACK", gameID)));
+        assertThrows(AlreadyTakenException.class, () -> servicemem.joinGame(token, new JoinGameRequest("WHITE", gameID)));
+        assertThrows(AlreadyTakenException.class, () -> servicemem.joinGame(token, new JoinGameRequest("BLACK", gameID)));
     }
 
     @Test
     public void joinRejectsBadToken() throws Exception {
         int gameID = joinAsWhite();
-        assertThrows(UnauthorizedException.class, () -> service.joinGame("bad token", new JoinGameRequest("BLACK", gameID)));
+        assertThrows(UnauthorizedException.class, () -> servicemem.joinGame("bad token", new JoinGameRequest("BLACK", gameID)));
     }
 
     @Test
     public void listGamesNoError() throws Exception {
         String token = registerUser("gamer");
         int gameID = joinAsWhite();
-        ListGamesResult resp = new ListGamesResult(service.listGames(token));
+        ListGamesResult resp = new ListGamesResult(servicemem.listGames(token));
         GameInfo expInfo = new GameInfo(gameID, "username", "null", "nameofgame");
         ArrayList<GameInfo> expList = new ArrayList<>();
         expList.add(expInfo);
@@ -95,8 +97,8 @@ public class GameServiceTest {
     @Test
     public void listRejectsBadToken() throws Exception {
         String token = registerUser("username");
-        service.listGames(token);
-        assertThrows(UnauthorizedException.class, () -> service.listGames("badtoken"));
+        servicemem.listGames(token);
+        assertThrows(UnauthorizedException.class, () -> servicemem.listGames("badtoken"));
     }
 
 }
