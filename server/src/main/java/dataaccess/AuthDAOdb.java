@@ -34,7 +34,7 @@ public class AuthDAOdb implements AuthDAO {
                         String username = resSet.getString("username");
                         return new AuthData(authToken, username);
                     } else {
-                        throw new UnauthorizedException("Invalid token.");
+                        throw new DataNotFoundException("Invalid token.");
                     }
                 }
             }
@@ -45,7 +45,12 @@ public class AuthDAOdb implements AuthDAO {
 
     @Override
     public boolean verify(String token) throws Exception {
-        return getAuthData(token) != null;
+        try {
+            AuthData found = getAuthData(token);
+            return true;
+        } catch (DataNotFoundException e) {
+            throw new UnauthorizedException("Invalid Token.");
+        }
     }
 
     @Override

@@ -2,6 +2,7 @@ package passoff.server;
 
 import dataaccess.AuthDAOdb;
 import dataaccess.DataAccessException;
+import dataaccess.DataNotFoundException;
 import jdk.jshell.spi.ExecutionControlProvider;
 import model.AuthData;
 import org.junit.jupiter.api.AfterEach;
@@ -36,7 +37,7 @@ public class AuthDAODBTests {
         // insert data
         authdao.insertData(new AuthData(realToken, "username"));
         // use wrong token
-        assertThrows(UnauthorizedException.class, () -> authdao.getAuthData(fakeToken));
+        assertThrows(DataNotFoundException.class, () -> authdao.getAuthData(fakeToken));
     }
 
     @Test

@@ -4,7 +4,7 @@ import model.UserData;
 
 public interface UserDAO {
     // Inserts a user into where the records are being kept
-    void insertUser(UserData data);
+    void insertUser(UserData data) throws DataAccessException;
     // Retrieves the UserData for a given username
     UserData getUserData(String username);
     // removes all UserData instances
