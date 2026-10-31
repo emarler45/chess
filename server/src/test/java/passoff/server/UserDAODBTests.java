@@ -13,6 +13,9 @@ public class UserDAODBTests {
 
     private final UserDAO users = new UserDAOdb();
 
+    public UserDAODBTests() throws DataAccessException {
+    }
+
 
     public void insertNewUser() throws DataAccessException {
         UserData newuser = new UserData("username", "pw", "me@email.com");

@@ -4,6 +4,7 @@ import chess.ChessGame;
 import model.GameData;
 
 import java.util.ArrayList;
+import java.util.concurrent.ThreadLocalRandom;
 
 public class GamesDAOMemory implements GamesDAO {
 
@@ -20,9 +21,14 @@ public class GamesDAOMemory implements GamesDAO {
     }
 
     @Override
-    public void createGame(int gameID, String gameName) {
+    public int createGame(String gameName) {
+        int gameID = 0;
+        do {
+            gameID = ThreadLocalRandom.current().nextInt(1000, 10000);
+        } while (getGame(gameID) != null);
         GameData newGame = new GameData(null, null, gameID, gameName, new ChessGame());
         dataList.add(newGame);
+        return gameID;
     }
 
     public void insertGame(GameData game) {

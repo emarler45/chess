@@ -6,7 +6,7 @@ import java.util.ArrayList;
 
 public interface GamesDAO {
     // Adds new game to db
-    void createGame(int gameID, String name);
+    int createGame(String name) throws Exception;
     // removes game from db
     void deleteGame(int gameID) throws DataNotFoundException;
     // retrieves game from db
@@ -16,5 +16,5 @@ public interface GamesDAO {
     // return list of games in db
     ArrayList<GameData> getGameList();
     // remove all games from the db
-    void clearAll();
+    void clearAll() throws DataAccessException;
 }

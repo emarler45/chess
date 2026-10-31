@@ -81,18 +81,10 @@ public class ChessService {
             if (r.gameName() == null || r.gameName().isEmpty()) {
                 throw new IllegalArgumentException("Game name must not be blank.");
             }
-            int gameID = 0;
-            if (authdao.verify(token)) {
-                do {
-                    gameID = ThreadLocalRandom.current().nextInt(1000, 10000);
-                } while (gamesdao.getGame(gameID) != null);
-                gamesdao.createGame(gameID, r.gameName());
-            } else {
-                throw new UnauthorizedException("Invalid Token");
-            }
+            int gameID = gamesdao.createGame(r.gameName());
             return new CreateGameResult(gameID);
         } else {
-            throw new UnauthorizedException("Invalid token,");
+            throw new UnauthorizedException("Invalid token");
         }
     }
 

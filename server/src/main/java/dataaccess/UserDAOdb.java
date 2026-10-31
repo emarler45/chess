@@ -10,6 +10,10 @@ import java.sql.SQLException;
 
 public class UserDAOdb implements UserDAO{
 
+    public UserDAOdb() throws DataAccessException {
+        configureDatabase();
+    }
+
 
     @Override
     public void insertUser(UserData data) throws DataAccessException {
