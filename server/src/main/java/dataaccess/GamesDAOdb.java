@@ -7,6 +7,7 @@ import model.GameData;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.sql.Types;
 import java.util.ArrayList;
 
 public class GamesDAOdb implements GamesDAO {
@@ -44,6 +45,7 @@ public class GamesDAOdb implements GamesDAO {
 
     @Override
     public void deleteGame(int gameID) throws Exception {
+        if (doesNotExist(gameID)) {throw new DataNotFoundException("Game with id %d not found".formatted(gameID));}
         String statement = "DELETE FROM games WHERE id = ?";
         executeStatement(statement, gameID);
     }
@@ -80,7 +82,15 @@ public class GamesDAOdb implements GamesDAO {
 
     @Override
     public void updateGame(GameData data) throws Exception {
+        int gameID = data.gameID();
+        if (doesNotExist(gameID)) {throw new DataNotFoundException("Game with id %d not found".formatted(gameID));}
+        String statement = "UPDATE games SET white = ?, black = ?, game = ? WHERE id = ?";
+        var gameJson = gameToJson(data.game());
+        executeStatement(statement, data.whiteUsername(), data.blackUsername(), gameJson, data.gameID());
+    }
 
+    private boolean doesNotExist(int id) throws DataAccessException {
+        return (getGame(id) == null);
     }
 
 
@@ -92,14 +102,20 @@ public class GamesDAOdb implements GamesDAO {
     @Override
     public void clearAll() throws DataAccessException {
         String statement = "TRUNCATE games";
-        executeStatement(statement, null);
+        executeStatement(statement);
     }
 
-    public void executeStatement(String statement, Integer id) throws DataAccessException {
+    public void executeStatement(String statement, Object... params) throws DataAccessException {
         try (var conn = DatabaseManager.getConnection()) {
             try (var prepStatement = conn.prepareStatement(statement)) {
-                if (id != null) {
-                    prepStatement.setInt(1, id);
+                for (int i = 0; i < params.length; i++){
+                    Object param = params[i];
+                    switch (param) {
+                        case Integer j -> prepStatement.setInt(i+1, j);
+                        case String s -> prepStatement.setString(i+1, s);
+                        case null -> prepStatement.setNull(1+i, Types.NULL);
+                        default -> throw new IllegalArgumentException("Unexpected value: " + param);
+                    }
                 }
                 prepStatement.executeUpdate();
             }

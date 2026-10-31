@@ -1,6 +1,8 @@
 package passoff.server;
 
 import chess.ChessGame;
+import chess.ChessMove;
+import chess.ChessPosition;
 import dataaccess.*;
 import model.GameData;
 import org.junit.jupiter.api.AfterEach;
@@ -49,6 +51,34 @@ public class GamesDAOTests {
         int myID = games.createGame("ThisGame");
         int badID = myID + 1;
         assertNull(games.getGame(badID));
+    }
+
+    @Test
+    public void joinGameSuccess() throws Exception {
+        int myID = games.createGame("newGame");
+        GameData gData = new GameData("gamer", null, myID, "newGame", null);
+        games.updateGame(gData);
+        GameData updated = games.getGame(myID);
+        assertEquals("gamer", updated.whiteUsername());
+    }
+
+    @Test
+    public void updateGameObj() throws Exception {
+        int myID = games.createGame("newGame");
+        ChessGame updatedGame = new ChessGame();
+        updatedGame.makeMove(new ChessMove(new ChessPosition(2,1), new ChessPosition(3, 1), null));
+        GameData gData = new GameData(null, null, myID, null, updatedGame);
+        games.updateGame(gData);
+        GameData updated = games.getGame(myID);
+        assertEquals(updatedGame, updated.game());
+    }
+
+    @Test
+    public void failedUpdateGame() throws Exception {
+        int myID = games.createGame("testGame");
+        int badID = myID + 1;
+        GameData gData = new GameData("gamer", null, badID, "newGame", null);
+        assertThrows(DataNotFoundException.class, () -> games.updateGame(gData));
     }
 
 }
