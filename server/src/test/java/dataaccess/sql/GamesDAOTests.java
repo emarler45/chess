@@ -1,10 +1,9 @@
-package passoff.server;
+package dataaccess.sql;
 
 import chess.ChessGame;
 import chess.ChessMove;
 import chess.ChessPosition;
 import dataaccess.*;
-import jdk.jshell.spi.ExecutionControlProvider;
 import model.GameData;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -34,7 +33,7 @@ public class GamesDAOTests {
 
     @Test
     public void failCreateGame() throws Exception {
-        assertThrows(IllegalArgumentException.class, () -> games.createGame("*****"));
+        assertThrows(IllegalArgumentException.class, () -> games.createGame("*"));
     }
 
     @Test

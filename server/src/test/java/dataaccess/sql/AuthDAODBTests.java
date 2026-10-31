@@ -1,9 +1,6 @@
-package passoff.server;
+package dataaccess.sql;
 
-import dataaccess.AuthDAOdb;
 import dataaccess.DataAccessException;
-import dataaccess.DataNotFoundException;
-import jdk.jshell.spi.ExecutionControlProvider;
 import model.AuthData;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
@@ -24,7 +21,7 @@ public class AuthDAODBTests {
     }
 
     @Test
-    public void insertAuthData() throws DataAccessException {
+    public void insertAuthData() throws Exception {
         authdao.insertData(new AuthData("023e4567-e89b-12d3-a456-426614174005", "username"));
     }
 
@@ -78,13 +75,13 @@ public class AuthDAODBTests {
         AuthData bad1 = new AuthData(star, "user");
         AuthData bad2 = new AuthData("023e4567-e89b-12d3-a456-426614174001", star);
         AuthData bad3 = new AuthData("023e4567-e89b-12d3-a456-426614174001", inject);
-        assertThrows(IllegalArgumentException.class, () -> authdao.insertData(bad1));
-        assertThrows(IllegalArgumentException.class, () -> authdao.insertData(bad2));
-        assertThrows(IllegalArgumentException.class, () -> authdao.insertData(bad3));
-        assertThrows(IllegalArgumentException.class, () -> authdao.getAuthData(star));
-        assertThrows(IllegalArgumentException.class, () -> authdao.getAuthData(inject));
-        assertThrows(IllegalArgumentException.class, () -> authdao.deleteData(star));
-        assertThrows(IllegalArgumentException.class, () -> authdao.deleteData(inject));
+        assertThrows(UnauthorizedException.class, () -> authdao.insertData(bad1));
+        assertThrows(UnauthorizedException.class, () -> authdao.insertData(bad2));
+        assertThrows(UnauthorizedException.class, () -> authdao.insertData(bad3));
+        assertThrows(UnauthorizedException.class, () -> authdao.getAuthData(star));
+        assertThrows(UnauthorizedException.class, () -> authdao.getAuthData(inject));
+        assertThrows(UnauthorizedException.class, () -> authdao.deleteData(star));
+        assertThrows(UnauthorizedException.class, () -> authdao.deleteData(inject));
     }
 
 }

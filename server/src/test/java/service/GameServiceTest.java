@@ -87,7 +87,7 @@ public class GameServiceTest {
         String token = registerUser("gamer");
         int gameID = joinAsWhite();
         ListGamesResult resp = new ListGamesResult(servicemem.listGames(token));
-        GameInfo expInfo = new GameInfo(gameID, "username", "null", "nameofgame");
+        GameInfo expInfo = new GameInfo(gameID, "username", null, "nameofgame");
         ArrayList<GameInfo> expList = new ArrayList<>();
         expList.add(expInfo);
         ListGamesResult exp = new ListGamesResult(expList);

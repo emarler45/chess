@@ -1,7 +1,10 @@
-package dataaccess;
+package dataaccess.sql;
 
 import chess.ChessGame;
 import com.google.gson.Gson;
+import dataaccess.DataAccessException;
+import dataaccess.DataNotFoundException;
+import dataaccess.GamesDAO;
 import model.GameData;
 
 import java.sql.ResultSet;
@@ -63,7 +66,7 @@ public class GamesDAOdb implements GamesDAO {
                 }
             }
         } catch (SQLException sqle){
-            throw new DataAccessException("Faailed to access database: %s".formatted(sqle.getMessage()));
+            throw new DataAccessException("Failed to access database: %s".formatted(sqle.getMessage()));
         }
         return null;
     }
@@ -137,7 +140,7 @@ public class GamesDAOdb implements GamesDAO {
 
 
     private boolean sanitized(String gameName) throws IllegalArgumentException {
-        if (!gameName.matches("\\w+")) {throw new IllegalArgumentException("Invalid Game Name.");}
+        if (gameName.matches("\\*")) {throw new IllegalArgumentException("Invalid Game Name.");}
         else {return true;}
     }
 

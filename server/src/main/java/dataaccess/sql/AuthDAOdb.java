@@ -1,12 +1,13 @@
-package dataaccess;
+package dataaccess.sql;
 
+import dataaccess.AuthDAO;
+import dataaccess.DataAccessException;
+import dataaccess.DataNotFoundException;
 import model.AuthData;
 import service.UnauthorizedException;
 
-import javax.xml.crypto.Data;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 
 public class AuthDAOdb implements AuthDAO {
 
@@ -15,7 +16,7 @@ public class AuthDAOdb implements AuthDAO {
     }
 
     @Override
-    public void insertData(AuthData auth) throws DataAccessException {
+    public void insertData(AuthData auth) throws Exception {
         if (sanitized(auth.authToken(), auth.username())){
             String statement = "INSERT INTO auths (token, username) VALUES (?, ?)";
             executeStatement(statement, auth.authToken(), auth.username());
@@ -24,7 +25,7 @@ public class AuthDAOdb implements AuthDAO {
 
     @Override
     public AuthData getAuthData(String authToken) throws Exception {
-        if (!sanitized(authToken, null)) throw new IllegalArgumentException("Invalid Token.");
+        if (!sanitized(authToken, null)) throw new UnauthorizedException("Invalid Token.");
         try (var conn = DatabaseManager.getConnection()) {
             String statement = "SELECT * FROM auths WHERE token = ?";
             try (var prepStatement = conn.prepareStatement(statement)){
@@ -54,7 +55,7 @@ public class AuthDAOdb implements AuthDAO {
     }
 
     @Override
-    public void deleteData(String token) throws DataAccessException {
+    public void deleteData(String token) throws Exception {
         if (sanitized(token, null)){
             String statement = "DELETE FROM auths WHERE token = ?";
             executeStatement(statement, token);
@@ -67,12 +68,12 @@ public class AuthDAOdb implements AuthDAO {
         executeStatement(statement);
     }
 
-    private boolean sanitized(String token, String username) throws IllegalArgumentException {
+    private boolean sanitized(String token, String username) throws UnauthorizedException {
         if (token != null){
-            if (!token.matches("([a-z0-9]+-?)+")) throw new IllegalArgumentException("Invalid Token.");
+            if (!token.matches("([a-z0-9]+-?)+")) throw new UnauthorizedException("Invalid Token.");
         }
         if (username != null){
-            if (!username.matches("\\w+")) throw new IllegalArgumentException("Invalid Username.");
+            if (!username.matches("\\w+")) throw new UnauthorizedException("Invalid Username.");
         }
         return true;
     }
