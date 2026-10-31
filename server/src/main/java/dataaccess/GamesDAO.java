@@ -14,7 +14,7 @@ public interface GamesDAO {
     // change record with matching GameData.gameID with data
     void updateGame(GameData data) throws Exception;
     // return list of games in db
-    ArrayList<GameData> getGameList();
+    ArrayList<GameData> getGameList() throws DataAccessException;
     // remove all games from the db
     void clearAll() throws DataAccessException;
 }

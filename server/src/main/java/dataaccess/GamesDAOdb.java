@@ -58,7 +58,7 @@ public class GamesDAOdb implements GamesDAO {
                 prepStatement.setInt(1, gameID);
                 try (ResultSet resSet = prepStatement.executeQuery()) {
                     if (resSet.next()){
-                        return readGame(resSet, gameID);
+                        return readGame(resSet);
                     }
                 }
             }
@@ -68,12 +68,12 @@ public class GamesDAOdb implements GamesDAO {
         return null;
     }
 
-    private GameData readGame(ResultSet rset, int id) throws SQLException {
+    private GameData readGame(ResultSet rset) throws SQLException {
         ChessGame gameFromJson = new Gson().fromJson(rset.getString("game"), ChessGame.class);
         return new GameData(
                 rset.getString("white"),
                 rset.getString("black"),
-                id,
+                rset.getInt("id"),
                 rset.getString("name"),
                 gameFromJson
         );
@@ -95,8 +95,19 @@ public class GamesDAOdb implements GamesDAO {
 
 
     @Override
-    public ArrayList<GameData> getGameList() {
-        return null;
+    public ArrayList<GameData> getGameList() throws DataAccessException {
+        ArrayList<GameData> resultList = new ArrayList<>();
+        String getStatement = "SELECT id, white, black, name, game FROM games";
+        try (var conn = DatabaseManager.getConnection();
+             var prepStatement = conn.prepareStatement(getStatement);
+             ResultSet resSet = prepStatement.executeQuery()){
+            while (resSet.next()){
+                resultList.add(readGame(resSet));
+            }
+        } catch (SQLException sqle) {
+            throw new DataAccessException("Failed to read database: %s".formatted(sqle.getMessage()));
+        }
+        return resultList;
     }
 
     @Override

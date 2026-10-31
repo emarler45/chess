@@ -4,9 +4,12 @@ import chess.ChessGame;
 import chess.ChessMove;
 import chess.ChessPosition;
 import dataaccess.*;
+import jdk.jshell.spi.ExecutionControlProvider;
 import model.GameData;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
+
+import java.util.ArrayList;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -79,6 +82,23 @@ public class GamesDAOTests {
         int badID = myID + 1;
         GameData gData = new GameData("gamer", null, badID, "newGame", null);
         assertThrows(DataNotFoundException.class, () -> games.updateGame(gData));
+    }
+
+    @Test
+    public void listGamesSuccess() throws Exception {
+        int id1 = games.createGame("myGame");
+        int id2 = games.createGame("testGame");
+        int id3 = games.createGame("lastGame");
+        ArrayList<GameData> result = games.getGameList();
+        assert(result.contains(games.getGame(id1)));
+        assert(result.contains(games.getGame(id2)));
+        assert(result.contains(games.getGame(id3)));
+    }
+
+    @Test
+    public void listNoGames() throws Exception {
+        ArrayList<GameData> result = games.getGameList();
+        assertEquals(new ArrayList<>(), result);
     }
 
 }
