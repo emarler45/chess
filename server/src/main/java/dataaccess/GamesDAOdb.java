@@ -43,14 +43,40 @@ public class GamesDAOdb implements GamesDAO {
     }
 
     @Override
-    public void deleteGame(int gameID) throws DataNotFoundException {
-
+    public void deleteGame(int gameID) throws Exception {
+        String statement = "DELETE FROM games WHERE id = ?";
+        executeStatement(statement, gameID);
     }
 
     @Override
-    public GameData getGame(int gameID) {
+    public GameData getGame(int gameID) throws DataAccessException {
+        String statement = "SELECT * FROM games WHERE id = ?";
+        try (var conn = DatabaseManager.getConnection()){
+            try (var prepStatement = conn.prepareStatement(statement)){
+                prepStatement.setInt(1, gameID);
+                try (ResultSet resSet = prepStatement.executeQuery()) {
+                    if (resSet.next()){
+                        return readGame(resSet, gameID);
+                    }
+                }
+            }
+        } catch (SQLException sqle){
+            throw new DataAccessException("Faailed to access database: %s".formatted(sqle.getMessage()));
+        }
         return null;
     }
+
+    private GameData readGame(ResultSet rset, int id) throws SQLException {
+        ChessGame gameFromJson = new Gson().fromJson(rset.getString("game"), ChessGame.class);
+        return new GameData(
+                rset.getString("white"),
+                rset.getString("black"),
+                id,
+                rset.getString("name"),
+                gameFromJson
+        );
+    }
+
 
     @Override
     public void updateGame(GameData data) throws Exception {
@@ -66,15 +92,14 @@ public class GamesDAOdb implements GamesDAO {
     @Override
     public void clearAll() throws DataAccessException {
         String statement = "TRUNCATE games";
-        executeStatement(statement);
+        executeStatement(statement, null);
     }
 
-    public void executeStatement(String statement, String... params) throws DataAccessException {
+    public void executeStatement(String statement, Integer id) throws DataAccessException {
         try (var conn = DatabaseManager.getConnection()) {
             try (var prepStatement = conn.prepareStatement(statement)) {
-                for (int i = 0; i < params.length; i++){
-                    String param = params[i];
-                    prepStatement.setString(i+1, param);
+                if (id != null) {
+                    prepStatement.setInt(1, id);
                 }
                 prepStatement.executeUpdate();
             }

@@ -1,6 +1,8 @@
 package passoff.server;
 
+import chess.ChessGame;
 import dataaccess.*;
+import model.GameData;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 
@@ -30,5 +32,23 @@ public class GamesDAOTests {
         assertThrows(IllegalArgumentException.class, () -> games.createGame("*****"));
     }
 
+    @Test
+    public void writeThenReadGame() throws Exception {
+        int myID = games.createGame("gameName");
+        GameData found = games.getGame(myID);
+        assertEquals("gameName", found.gameName());
+        assertInstanceOf(Integer.class, found.gameID());
+        assertNull(found.blackUsername());
+        assertNull(found.whiteUsername());
+        ChessGame newGame = new ChessGame();
+        assertEquals(newGame, found.game());
+    }
+
+    @Test
+    public void failReadGame() throws Exception {
+        int myID = games.createGame("ThisGame");
+        int badID = myID + 1;
+        assertNull(games.getGame(badID));
+    }
 
 }
