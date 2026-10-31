@@ -58,7 +58,7 @@ public class ChessService {
         if (foundData == null){
             throw new UnauthorizedException("No user with name %s".formatted(r.username()));
         } else {
-            if (foundData.password().equals(r.password())) {
+            if (userdao.verifyPassword(r.username(), r.password())) {
                 AuthData newAuth = generateAuth(r.username());
                 authdao.insertData(newAuth);
                 return new LoginResult(newAuth.username(), newAuth.authToken());

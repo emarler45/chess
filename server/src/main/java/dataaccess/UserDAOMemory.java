@@ -28,6 +28,12 @@ public class UserDAOMemory implements UserDAO {
         return null;
     }
 
+    @Override
+    public boolean verifyPassword(String username, String password){
+        UserData foundData = getUserData(username);
+        return foundData.password().equals(password);
+    }
+
     public void clearAll() {
         dataList = new ArrayList<>();
     }
