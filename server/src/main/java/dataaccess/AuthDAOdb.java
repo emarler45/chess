@@ -34,7 +34,7 @@ public class AuthDAOdb implements AuthDAO {
                         String username = resSet.getString("username");
                         return new AuthData(authToken, username);
                     } else {
-                        throw new DataNotFoundException("Invalid token.");
+                        throw new UnauthorizedException("Invalid token.");
                     }
                 }
             }

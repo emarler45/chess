@@ -37,7 +37,7 @@ public class AuthDAODBTests {
         // insert data
         authdao.insertData(new AuthData(realToken, "username"));
         // use wrong token
-        assertThrows(DataNotFoundException.class, () -> authdao.getAuthData(fakeToken));
+        assertThrows(UnauthorizedException.class, () -> authdao.getAuthData(fakeToken));
     }
 
     @Test
