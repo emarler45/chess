@@ -15,7 +15,7 @@ import java.util.Map;
 public class Server {
 
     private final Javalin javalin;
-    private final Handler handler = new Handler();
+    private Handler handler;
 
     public Server() {
         javalin = Javalin.create(config -> config.staticFiles.add("web"))
@@ -33,6 +33,7 @@ public class Server {
 
     private void logoutUser(Context ctx){
         try {
+            handler = new Handler();
             handler.logout(ctx);
         } catch (UnauthorizedException e) {
             handleError(ctx, 401, e.getMessage());
@@ -43,6 +44,7 @@ public class Server {
 
     private void loginUser(Context ctx) {
         try {
+            handler = new Handler();
             LoginResult response = handler.login(ctx);
             handleSuccess(ctx, response);
         } catch (IllegalArgumentException | DataNotFoundException e){
@@ -58,6 +60,7 @@ public class Server {
 
     private void registerUser(Context ctx) {
         try {
+            handler = new Handler();
             RegisterResult response = handler.register(ctx);
             handleSuccess(ctx, response);
         } catch (IllegalArgumentException e) {
@@ -72,6 +75,7 @@ public class Server {
 
     private void createGame(Context ctx) {
         try {
+            handler = new Handler();
             CreateGameResult response = handler.createGame(ctx);
             handleSuccess(ctx, response);
         } catch (IllegalArgumentException e) {
@@ -85,6 +89,7 @@ public class Server {
 
     private void listGames(Context ctx) {
         try{
+            handler = new Handler();
             ListGamesResult response = handler.listGames(ctx);
             handleSuccess(ctx, response);
         } catch (UnauthorizedException e) {
@@ -97,6 +102,7 @@ public class Server {
 
     private void joinGame(Context ctx) {
         try {
+            handler = new Handler();
             handler.joinGame(ctx);
         } catch (IllegalArgumentException e) {
             handleError(ctx, 400, e.getMessage());
@@ -111,6 +117,7 @@ public class Server {
 
     private void clearDB(Context ctx) {
         try {
+            handler = new Handler();
             handler.clearAll();
         } catch (Exception e){
             handleError(ctx, 500, e.getMessage());

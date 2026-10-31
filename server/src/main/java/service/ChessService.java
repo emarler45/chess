@@ -15,10 +15,10 @@ public class ChessService {
     private GamesDAO gamesdao;
     private AuthDAO authdao;
 
-    public ChessService() {
-        authdao = new AuthDAOMemory();
-        gamesdao = new GamesDAOMemory();
-        userdao = new UserDAOMemory();
+    public ChessService() throws DataAccessException {
+        authdao = new AuthDAOdb();
+        gamesdao = new GamesDAOdb();
+        userdao = new UserDAOdb();
     }
 
     public ChessService(UserDAO u, GamesDAO g, AuthDAO a){

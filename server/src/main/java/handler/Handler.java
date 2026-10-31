@@ -10,11 +10,11 @@ import java.util.ArrayList;
 
 public class Handler {
 
-    private final ChessService service = new ChessService();
+    private ChessService service = new ChessService();
 
     private final Gson srlzr = new Gson();
 
-    public Handler() {
+    public Handler() throws DataAccessException {
 
     }
 

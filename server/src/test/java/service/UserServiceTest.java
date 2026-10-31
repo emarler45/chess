@@ -1,5 +1,6 @@
 package service;
 
+import dataaccess.DataAccessException;
 import dataaccess.DataNotFoundException;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,6 +13,9 @@ import static org.junit.jupiter.api.Assertions.*;
 public class UserServiceTest {
 
     public ChessService service = new ChessService();
+
+    public UserServiceTest() throws DataAccessException {
+    }
 
     public RegisterRequest makeRegisterReq(){
         return new RegisterRequest("gaming", "password", "email");

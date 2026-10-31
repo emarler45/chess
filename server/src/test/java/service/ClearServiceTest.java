@@ -10,6 +10,9 @@ public class ClearServiceTest {
 
     private final ChessService clear = new ChessService();
 
+    public ClearServiceTest() throws DataAccessException {
+    }
+
     @Test
     public void clearsAllUsers() throws DataAccessException {
         clear.clearAll();
