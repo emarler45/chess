@@ -133,9 +133,6 @@ public class ChessService {
             ArrayList<GameData> gamesList = gamesdao.getGameList();
             ArrayList<GameInfo> gameInfoList = new ArrayList<>();
             for (GameData game : gamesList){
-//                String whiteUser = (game.whiteUsername() == null) ? "null" : game.whiteUsername();
-//                String blackUser = (game.blackUsername() == null) ? "null" : game.blackUsername();
-//                gameInfoList.add(new GameInfo(game.gameID(), whiteUser, blackUser, game.gameName()));
                 gameInfoList.add(new GameInfo(game.gameID(), game.whiteUsername(), game.blackUsername(), game.gameName()));
 
             }

@@ -25,7 +25,9 @@ public class AuthDAOdb implements AuthDAO {
 
     @Override
     public AuthData getAuthData(String authToken) throws Exception {
-        if (!sanitized(authToken, null)) throw new UnauthorizedException("Invalid Token.");
+        if (!sanitized(authToken, null)) {
+            throw new UnauthorizedException("Invalid Token.");
+        }
         try (var conn = DatabaseManager.getConnection()) {
             String statement = "SELECT * FROM auths WHERE token = ?";
             try (var prepStatement = conn.prepareStatement(statement)){
@@ -70,10 +72,14 @@ public class AuthDAOdb implements AuthDAO {
 
     private boolean sanitized(String token, String username) throws UnauthorizedException {
         if (token != null){
-            if (!token.matches("([a-z0-9]+-?)+")) throw new UnauthorizedException("Invalid Token.");
+            if (!token.matches("([a-z0-9]+-?)+")) {
+                throw new UnauthorizedException("Invalid Token.");
+            }
         }
         if (username != null){
-            if (!username.matches("\\w+")) throw new UnauthorizedException("Invalid Username.");
+            if (!username.matches("\\w+")) {
+                throw new UnauthorizedException("Invalid Username.");
+            }
         }
         return true;
     }

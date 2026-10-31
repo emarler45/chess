@@ -82,13 +82,17 @@ public class UserDAOdb implements UserDAO {
 
     private boolean sanitized(String username, String password, String email) throws IllegalArgumentException {
         if (username != null){
-            if (!username.matches("\\w+")) throw new IllegalArgumentException("Invalid Username.");
+            if (!username.matches("\\w+")) {throw new IllegalArgumentException("Invalid Username.");}
         }
         if (password != null){
-            if (!password.matches("[\\w!@#$%^&*()+<>?]+")) throw new IllegalArgumentException("Invalid password.");
+            if (!password.matches("[\\w!@#$%^&*()+<>?]+")) {
+                throw new IllegalArgumentException("Invalid password.");
+            }
         }
         if (email != null){
-            if (!email.matches("[\\w.]+@\\w+\\.\\w+")) throw new IllegalArgumentException("Invalid email.");
+            if (!email.matches("[\\w.]+@\\w+\\.\\w+")) {
+                throw new IllegalArgumentException("Invalid email.");
+            }
         }
         return true;
     }
