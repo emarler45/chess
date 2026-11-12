@@ -1,7 +1,14 @@
-package client;
+package server;
 
+import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
+import java.net.http.HttpRequest.BodyPublisher;
+import java.net.http.HttpRequest.BodyPublishers;
+import java.net.http.HttpResponse;
+
+import service.*;
+import com.google.gson.Gson;
 
 public class ServerFacade {
 
@@ -12,50 +19,106 @@ public class ServerFacade {
         serverUrl = url;
     }
 
-    public void register(String username, String password, String email){
+    public RegisterResult register(String username, String password, String email){
         String path = "/user";
         String method = "POST";
-        HttpRequest req = makeRequest(path, method, username, password, email);
+        RegisterRequest r = new RegisterRequest(username, password, email);
+        HttpRequest req = makeRequest(path, method, r);
+        HttpResponse<String> resp = sendRequest(req);
+        return handleResponse(resp, RegisterResult.class);
     }
 
-    public void login(String username, String password){
+    public LoginResult login(String username, String password){
         String path = "/session";
         String method = "POST";
+        LoginRequest r = new LoginRequest(username, password);
+        HttpRequest req = makeRequest(path, method, r);
+        HttpResponse<String> resp = sendRequest(req);
+        return handleResponse(resp, LoginResult.class);
     }
 
     public void logout(){
         String path = "/session";
         String method = "DELETE";
+        HttpRequest req = makeRequest(path, method, null);
+        HttpResponse<String> resp = sendRequest(req);
+        handleResponse(resp, null);
     }
 
-    public void joinGame(int id){
+    public void joinGame(int id, String playerColor){
         String path = "/game";
         String method = "PUT";
-
-
+        JoinGameRequest r = new JoinGameRequest(playerColor, id);
+        HttpRequest req = makeRequest(path, method, r);
+        HttpResponse<String> resp = sendRequest(req);
+        handleResponse(resp, null);
     }
 
-    public void listGames(){
+    public ListGamesResult listGames(){
         String path = "/game";
         String method = "GET";
+        HttpRequest req = makeRequest(path, method, null);
+        HttpResponse<String> resp = sendRequest(req);
+        return handleResponse(resp, ListGamesResult.class);
     }
 
-    public void createGame(String gameName){
+    public CreateGameResult createGame(String gameName){
         String path = "/game";
         String method = "POST";
-
+        CreateGameRequest r = new CreateGameRequest(gameName);
+        HttpRequest req = makeRequest(path, method, r);
+        HttpResponse<String> resp = sendRequest(req);
+        return handleResponse(resp, CreateGameResult.class);
     }
 
     public void delete(){
         String path = "/db";
         String method = "DELETE";
-
+        HttpRequest req = makeRequest(path, method, null);
+        HttpResponse<String> resp = sendRequest(req);
+        handleResponse(resp, null);
     }
 
-    private HttpRequest makeRequest(String path, String method, Object... params){
-
+    private HttpRequest makeRequest(String path, String method, Record body){
+        var request = HttpRequest.newBuilder()
+                .uri(URI.create(serverUrl + path))
+                .method(method, makeBody(body));
+        if (body != null){
+            request.setHeader("Content-Type", "application/json");
+        }
+        return request.build();
     }
 
+    private BodyPublisher makeBody(Record body){
+        if (body != null){
+            return BodyPublishers.ofString(new Gson().toJson(body));
+        } else {
+            return BodyPublishers.noBody();
+        }
+    }
 
+    private HttpResponse<String> sendRequest(HttpRequest request){
+        try {
+            return userClient.send(request, HttpResponse.BodyHandlers.ofString());
+        } catch (Exception e) {
+            throw new ResponseException(e.getMessage());
+        }
+    }
+
+    private <T> T handleResponse(HttpResponse<String> response, Class<T> desiredClass){
+        int code = response.statusCode();
+        if (!isSuccessfulCode(code)){
+            throw new ResponseException("Something went wrong.");
+        }
+        if (desiredClass == null){
+            return null;
+        } else {
+            return new Gson().fromJson(response.body(), desiredClass);
+        }
+    }
+
+    private boolean isSuccessfulCode(int code){
+        return code / 100 == 2;
+    }
 
 }
