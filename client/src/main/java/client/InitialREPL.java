@@ -11,7 +11,6 @@ public class InitialREPL extends Repl{
     @Override
     public State loop(){
         help();
-        String action = "";
         while (true){
             super.printPrompt();
             String response = scanner.nextLine();
@@ -24,8 +23,8 @@ public class InitialREPL extends Repl{
     }
 
     @Override
-    public String eval(String input) {
-        return "";
+    public State eval(String input) {
+        return null;
     }
 
     @Override

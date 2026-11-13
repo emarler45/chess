@@ -9,7 +9,7 @@ public class InGameREPL extends Repl{
     }
 
     @Override
-    public String eval(String input) {
+    public State eval(String input) {
         return "";
     }
 
