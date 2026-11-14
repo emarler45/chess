@@ -5,6 +5,7 @@ import server.ResponseException;
 import server.ServerFacade;
 import service.*;
 import ui.ChessClientOutput;
+import ui.EscapeSequences;
 
 import java.util.Arrays;
 import java.util.Scanner;
@@ -15,7 +16,6 @@ public class ChessClient {
     private State currState = State.LOGGED_OUT;
     private String authToken;
     private final ServerFacade facade;
-    private final Repl repl = new Repl();
     private GameREPL gameREPL;
     private final ChessClientOutput out;
     public Scanner scanner = new Scanner(System.in);
@@ -35,12 +35,12 @@ public class ChessClient {
 
     public void run() {
         out.print("Welcome to ekm45's Chess Game!");
-        help();
+        out.print(help());
         while (currState != State.QUIT) {
             if (currState == State.IN_GAME){
                 gameREPL.loop();
             } else {
-                repl.printPrompt();
+                out.print(getPrompt());
                 String input = scanner.nextLine();
                 String result = eval(input);
                 out.print(result);
@@ -55,6 +55,7 @@ public class ChessClient {
             String cmd = (tokens.length > 0) ? tokens[0] : "help";
             String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
+                case "help" -> help();
                 case "login" -> login(params);
                 case "register" -> register(params);
                 case "quit" -> quit();
@@ -73,30 +74,38 @@ public class ChessClient {
     }
 
     private String login(String... params) throws ResponseException{
-        assertLoggedOut();
-        LoginResult result = facade.login(params[0], params[1]);
-        currState = State.LOGGED_IN;
-        this.authToken = result.authToken();
-        return "Successfully logged in as %s".formatted(result.username());
+        try {
+            assertLoggedOut();
+            LoginResult result = facade.login(params[0], params[1]);
+            currState = State.LOGGED_IN;
+            this.authToken = result.authToken();
+            this.currentUserName = result.username();
+            return "Successfully logged in as %s".formatted(result.username());
+        } catch (ArrayIndexOutOfBoundsException e) {
+            throw new ResponseException("Command format: login <username> <password>");
+        }
     }
 
     private String register(String... params){
         assertLoggedOut();
         RegisterResult result = facade.register(params[0], params[1], params[2]);
-        currState = State.LOGGED_IN;
         this.authToken = result.authToken();
+        this.currentUserName = result.username();
+        currState = State.LOGGED_IN;
         return "Successful registered and logged in as %s".formatted(result.username());
     }
 
     private String logout(){
         assertLoggedIn();
         facade.logout(authToken);
-        currState = State.LOGGED_OUT;
         this.authToken = null;
+        this.currentUserName = null;
+        currState = State.LOGGED_OUT;
         return "Successfully logged out!";
     }
 
     private String deleteGames(){
+        assertLoggedOut();
         facade.delete();
         return "Successfully cleared database!";
     }
@@ -189,5 +198,10 @@ public class ChessClient {
         if (isLoggedIn()){
             throw new ResponseException("You are already logged in!");
         }
+    }
+
+    public String getPrompt() {
+        String name = (currState == State.LOGGED_IN) ? currentUserName : "[logged out]";
+        return "\n" + name + " " + EscapeSequences.SET_TEXT_COLOR_BLUE +  ">>>" + EscapeSequences.RESET_TEXT_COLOR + " " ;
     }
 }

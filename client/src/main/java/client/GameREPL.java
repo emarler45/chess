@@ -8,7 +8,7 @@ import ui.ChessClientOutput;
 
 import java.util.Arrays;
 
-public class GameREPL extends Repl{
+public class GameREPL{
 
     private ChessClientOutput out;
     private final Integer gameID;

@@ -115,6 +115,7 @@ public class ServerFacade {
             if (respBody!= null){
                 throw ResponseException.fromJson(respBody);
             }
+            throw new ResponseException("Other failure");
         }
         if (desiredClass == null){
             return null;
