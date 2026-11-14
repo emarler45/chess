@@ -111,7 +111,10 @@ public class ServerFacade {
     private <T> T handleResponse(HttpResponse<String> response, Class<T> desiredClass){
         int code = response.statusCode();
         if (!isSuccessfulCode(code)){
-            throw new ResponseException("Something went wrong.");
+            var respBody = response.body();
+            if (respBody!= null){
+                throw ResponseException.fromJson(respBody);
+            }
         }
         if (desiredClass == null){
             return null;

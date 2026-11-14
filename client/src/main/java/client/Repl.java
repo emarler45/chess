@@ -9,8 +9,6 @@ public class Repl {
 
 
 
-
-
     public void printPrompt() {
         System.out.print("\n" + EscapeSequences.EMPTY + ">>> " + EscapeSequences.SET_TEXT_COLOR_BLUE);
     }

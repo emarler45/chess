@@ -7,7 +7,6 @@ import service.*;
 import ui.ChessClientOutput;
 
 import java.util.Arrays;
-import java.util.Locale;
 import java.util.Scanner;
 
 public class ChessClient {
@@ -15,8 +14,9 @@ public class ChessClient {
     private String currentUserName;
     private State currState = State.LOGGED_OUT;
     private String authToken;
-    private ServerFacade facade;
+    private final ServerFacade facade;
     private final Repl repl = new Repl();
+    private GameREPL gameREPL;
     private final ChessClientOutput out;
     public Scanner scanner = new Scanner(System.in);
 
@@ -25,6 +25,7 @@ public class ChessClient {
     public ChessClient(String url, String outKind){
         facade = new ServerFacade(url);
         out = new ChessClientOutput(outKind);
+        gameREPL = new GameREPL(out, facade, null);
     }
 
     public ChessClient(String url){
@@ -36,10 +37,14 @@ public class ChessClient {
         out.print("Welcome to ekm45's Chess Game!");
         help();
         while (currState != State.QUIT) {
-            repl.printPrompt();
-            String input = scanner.nextLine();
-            String result = eval(input);
-            out.print(result);
+            if (currState == State.IN_GAME){
+                gameREPL.loop();
+            } else {
+                repl.printPrompt();
+                String input = scanner.nextLine();
+                String result = eval(input);
+                out.print(result);
+            }
         }
         out.print("Goodbye!");
     }
@@ -57,10 +62,10 @@ public class ChessClient {
                 case "logout" -> logout();
                 case "list" -> listGames();
                 case "join" -> joinGame(params);
-                case "watch" -> watchGame(params);
+                case "observe" -> watchGame(params);
                 case "create" -> createGame(params);
                 case "delete" -> deleteGames();
-                default -> help();
+                default -> "Command not recognized";
             };
         } catch (ResponseException ex) {
             return ex.getMessage();
@@ -109,15 +114,25 @@ public class ChessClient {
     }
 
     private String joinGame(String... params){
-        assertLoggedIn();
-        int gameID = Integer.parseInt(params[0]);
-        facade.joinGame(authToken, gameID, params[1]);
-        return "Successfully joined game %d as %s".formatted(gameID, params[1].toUpperCase());
+        try {
+            assertLoggedIn();
+            int gameID = Integer.parseInt(params[0]);
+            facade.joinGame(authToken, gameID, params[1]);
+            gameREPL = new GameREPL(out, facade, gameID);
+            currState = State.IN_GAME;
+            return "Successfully joined game %d as %s".formatted(gameID, params[1].toUpperCase());
+        } catch (NumberFormatException e) {
+            throw new ResponseException("Game ID must be a number!");
+        } catch (ArrayIndexOutOfBoundsException e) {
+            throw new ResponseException("Command format: join <ID> [WHITE|BLACK]");
+        }
     }
 
     private String watchGame(String... params){
         assertLoggedIn();
         int gameID = Integer.parseInt(params[0]);
+        gameREPL = new GameREPL(out, facade, gameID);
+        currState = State.IN_GAME;
         return "Observing game %d".formatted(gameID);
     }
 
@@ -128,7 +143,7 @@ public class ChessClient {
     }
 
     public String help(){
-        return "These are the available commands:" + switch (currState){
+        return "These are the available commands:\n" + switch (currState){
             case LOGGED_OUT -> """
                     help
                     register <username> <password> <email>
@@ -138,8 +153,8 @@ public class ChessClient {
             case LOGGED_IN -> """
                     help
                     list
-                    join <gameID> <color>
-                    watch <gameID>
+                    join <gameID> <[WHITE|BLACK]> (case insensitive)
+                    observe <gameID>
                     create <gameName>
                     """;
             case IN_GAME -> """
@@ -154,7 +169,7 @@ public class ChessClient {
             return "You must leave your game first!";
         }
         if (currState == State.LOGGED_IN){
-            authToken = null;
+            return "You must log out first!";
         }
         currState = State.QUIT;
         return "Quitting...";
