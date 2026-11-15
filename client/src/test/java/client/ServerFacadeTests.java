@@ -1,5 +1,6 @@
 package client;
 
+import chess.ChessGame;
 import org.junit.jupiter.api.*;
 import server.ResponseException;
 import server.Server;
@@ -108,7 +109,7 @@ public class ServerFacadeTests {
         facade.register("username", "pass", "email.e@email.com");
         LoginResult r =  facade.login("username", "pass");
         String token = r.authToken();
-        assertThrows(ResolutionException.class, () -> facade.createGame("fakeToken", "gamename"));
+        assertThrows(ResponseException.class, () -> facade.createGame("fakeToken", "gamename"));
         ListGamesResult list = facade.listGames(token);
         assert(list.games().isEmpty());
     }
@@ -121,7 +122,23 @@ public class ServerFacadeTests {
         LoginResult r2 =  facade.login("gamer", "pass");
         String token1 = r1.authToken();
         String token2 = r2.authToken();
+        int gameID = facade.createGame(token1, "test").gameID();
+        assertDoesNotThrow(() -> facade.joinGame(token1, gameID, "WHITE"));
+        assertDoesNotThrow(() -> facade.joinGame(token2, gameID, "BLACK"));
+    }
 
+    @Test
+    public void failJoinGame() {
+        facade.register("username", "pass", "email.e@email.com");
+        facade.register("gamer", "pass", "other@email.com");
+        LoginResult r1 =  facade.login("username", "pass");
+        LoginResult r2 =  facade.login("gamer", "pass");
+        String token1 = r1.authToken();
+        String token2 = r2.authToken();
+        int gameID = facade.createGame(token1, "test").gameID();
+        assertThrows(ResponseException.class, () -> facade.joinGame("badtoken", gameID, "WHITE"));
+        assertThrows(ResponseException.class, () -> facade.joinGame(token1, gameID+1, "WHITE"));
+        assertThrows(ResponseException.class, () -> facade.joinGame(token2, gameID, "YELLOW"));
     }
 
     @Test

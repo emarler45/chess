@@ -8,6 +8,7 @@ import ui.ChessClientOutput;
 import ui.EscapeSequences;
 
 import java.util.Arrays;
+import java.util.Locale;
 import java.util.Scanner;
 
 public class ChessClient {
@@ -126,7 +127,8 @@ public class ChessClient {
         try {
             assertLoggedIn();
             int gameID = Integer.parseInt(params[0]);
-            facade.joinGame(authToken, gameID, params[1]);
+            String playerColor = params[1].toUpperCase();
+            facade.joinGame(authToken, gameID, playerColor);
             gameREPL = new GameREPL(out, facade, gameID);
             currState = State.IN_GAME;
             return "Successfully joined game %d as %s".formatted(gameID, params[1].toUpperCase());
