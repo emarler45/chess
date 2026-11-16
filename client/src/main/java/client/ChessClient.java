@@ -1,8 +1,5 @@
 package client;
 
-import com.google.gson.Gson;
-import server.ResponseException;
-import server.ServerFacade;
 import service.*;
 import ui.ChessClientOutput;
 import ui.EscapeSequences;

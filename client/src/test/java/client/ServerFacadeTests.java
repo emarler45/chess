@@ -1,15 +1,10 @@
 package client;
 
-import chess.ChessGame;
 import org.junit.jupiter.api.*;
-import server.ResponseException;
 import server.Server;
-import server.ServerFacade;
 import service.ListGamesResult;
 import service.LoginResult;
 import service.RegisterResult;
-
-import java.lang.module.ResolutionException;
 
 import static org.junit.jupiter.api.Assertions.*;
 

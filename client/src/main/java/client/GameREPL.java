@@ -2,8 +2,6 @@ package client;
 
 import chess.ChessBoard;
 import chess.ChessGame;
-import server.ResponseException;
-import server.ServerFacade;
 import ui.BoardRenderer;
 import ui.ChessClientOutput;
 import ui.EscapeSequences;
