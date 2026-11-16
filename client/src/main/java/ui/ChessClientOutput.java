@@ -17,9 +17,16 @@ public class ChessClientOutput {
 
     public void print(String message){
         if (out == outKind.SYSTEM){
+            System.out.print(message);
+        }
+    }
+
+    public void printline(String message){
+        if (out == outKind.SYSTEM){
             System.out.println(message);
         }
     }
+
 
 
     private enum outKind {

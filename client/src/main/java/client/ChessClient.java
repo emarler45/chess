@@ -9,6 +9,7 @@ import ui.EscapeSequences;
 
 import java.util.Arrays;
 import java.util.Locale;
+import java.util.Objects;
 import java.util.Scanner;
 
 public class ChessClient {
@@ -26,7 +27,6 @@ public class ChessClient {
     public ChessClient(String url, String outKind){
         facade = new ServerFacade(url);
         out = new ChessClientOutput(outKind);
-        gameREPL = new GameREPL(out, facade, null);
     }
 
     public ChessClient(String url){
@@ -35,19 +35,18 @@ public class ChessClient {
     }
 
     public void run() {
-        out.print("Welcome to ekm45's Chess Game!");
-        out.print(help());
+        out.printline("Welcome to ekm45's Chess Game!");
+        out.printline(help());
         while (currState != State.QUIT) {
+            String result;
             if (currState == State.IN_GAME){
-                gameREPL.loop();
+                result = doInGameLoop();
             } else {
-                out.print(getPrompt());
-                String input = scanner.nextLine();
-                String result = eval(input);
-                out.print(result);
+                result = doREPL();
             }
+            out.printline(result);
         }
-        out.print("Goodbye!");
+        out.printline("Goodbye!");
     }
 
     private String eval(String input){
@@ -57,8 +56,10 @@ public class ChessClient {
             String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
                 case "help" -> help();
+
                 case "login" -> login(params);
                 case "register" -> register(params);
+                case "delete" -> deleteGames();
                 case "quit" -> quit();
 
                 case "logout" -> logout();
@@ -66,13 +67,28 @@ public class ChessClient {
                 case "join" -> joinGame(params);
                 case "observe" -> watchGame(params);
                 case "create" -> createGame(params);
-                case "delete" -> deleteGames();
                 default -> "Command not recognized";
             };
         } catch (ResponseException ex) {
             return ex.getMessage();
         }
     }
+
+    private String doREPL() {
+        out.print(getPrompt());
+        String input = scanner.nextLine();
+        return eval(input);
+    }
+
+    private String doInGameLoop(){
+        String result = gameREPL.doREPL();
+        if (Objects.equals(result, "leave")){
+            currState = State.LOGGED_IN;
+            return "Leaving game!";
+        }
+        return result;
+    }
+
 
     private String login(String... params) throws ResponseException{
         try {
@@ -129,7 +145,7 @@ public class ChessClient {
             int gameID = Integer.parseInt(params[0]);
             String playerColor = params[1].toUpperCase();
             facade.joinGame(authToken, gameID, playerColor);
-            gameREPL = new GameREPL(out, facade, gameID);
+            gameREPL = new GameREPL(out, facade, null);
             currState = State.IN_GAME;
             return "Successfully joined game %d as %s".formatted(gameID, params[1].toUpperCase());
         } catch (NumberFormatException e) {
@@ -142,7 +158,7 @@ public class ChessClient {
     private String watchGame(String... params){
         assertLoggedIn();
         int gameID = Integer.parseInt(params[0]);
-        gameREPL = new GameREPL(out, facade, gameID);
+        gameREPL = new GameREPL(out, facade, null);
         currState = State.IN_GAME;
         return "Observing game %d".formatted(gameID);
     }
@@ -203,7 +219,7 @@ public class ChessClient {
     }
 
     public String getPrompt() {
-        String name = (currState == State.LOGGED_IN) ? currentUserName : "[logged out]";
-        return "\n" + name + " " + EscapeSequences.SET_TEXT_COLOR_BLUE +  ">>>" + EscapeSequences.RESET_TEXT_COLOR + " " ;
+        String name = (currState == State.LOGGED_IN) ? "[" + currentUserName + "]" : "[logged out]";
+        return name + " " + EscapeSequences.SET_TEXT_COLOR_BLUE +  ">>>" + EscapeSequences.RESET_TEXT_COLOR + " " ;
     }
 }

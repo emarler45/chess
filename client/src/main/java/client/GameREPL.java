@@ -2,28 +2,31 @@ package client;
 
 import chess.ChessBoard;
 import chess.ChessGame;
+import server.ResponseException;
 import server.ServerFacade;
 import ui.BoardRenderer;
 import ui.ChessClientOutput;
+import ui.EscapeSequences;
 
 import java.util.Arrays;
 
-public class GameREPL{
+public class GameREPL extends Repl {
 
-    private ChessClientOutput out;
+
     private final Integer gameID;
     private final ServerFacade facade;
     private final BoardRenderer renderer = new BoardRenderer();
 
     public GameREPL(ChessClientOutput out, ServerFacade facade, Integer gameID){
-        this.out = out;
+        super(out);
         this.gameID = gameID;
         this.facade = facade;
     }
 
-
-    public void loop(){
-        renderer.renderBoard(new ChessBoard(), ChessGame.TeamColor.WHITE);
+    public String doREPL() {
+        super.out.print(getPrompt());
+        String input = scanner.nextLine();
+        return eval(input);
     }
 
 
@@ -32,12 +35,22 @@ public class GameREPL{
             String[] tokens = input.toLowerCase().split(" ");
             String cmd = (tokens.length > 0) ? tokens[0] : "help";
             String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
+            return switch (cmd) {
+                case "board" -> renderer.renderBoard(new ChessBoard(), ChessGame.TeamColor.WHITE);
+                case "help" -> "help commands";
+                case "leave" -> "leave";
+                default -> "Command not recognized";
+            };
         } catch (Exception e) {
+            throw new ResponseException("Error updating game");
         }
-        return null;
     }
 
     private ChessBoard getBoard(int gameID){
         return null;
+    }
+
+    public String getPrompt() {
+        return "[game] " + EscapeSequences.SET_TEXT_COLOR_BLUE +  ">>>" + EscapeSequences.RESET_TEXT_COLOR + " " ;
     }
 }
