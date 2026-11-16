@@ -2,9 +2,9 @@ package client;
 
 import org.junit.jupiter.api.*;
 import server.Server;
-import service.ListGamesResult;
-import service.LoginResult;
-import service.RegisterResult;
+import model.ListGamesResult;
+import model.LoginResult;
+import model.RegisterResult;
 
 import static org.junit.jupiter.api.Assertions.*;
 

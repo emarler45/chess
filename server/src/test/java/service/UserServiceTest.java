@@ -1,6 +1,10 @@
 package service;
 
 import dataaccess.*;
+import model.LoginRequest;
+import model.LoginResult;
+import model.RegisterRequest;
+import model.RegisterResult;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 

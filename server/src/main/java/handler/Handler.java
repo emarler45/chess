@@ -3,7 +3,7 @@ package handler;
 import com.google.gson.Gson;
 import dataaccess.DataAccessException;
 import io.javalin.http.Context;
-import model.GameData;
+import model.*;
 import service.*;
 
 import java.util.ArrayList;

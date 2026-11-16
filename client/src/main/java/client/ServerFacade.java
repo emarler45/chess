@@ -7,7 +7,7 @@ import java.net.http.HttpRequest.BodyPublisher;
 import java.net.http.HttpRequest.BodyPublishers;
 import java.net.http.HttpResponse;
 
-import service.*;
+import model.*;
 import com.google.gson.Gson;
 
 public class ServerFacade {

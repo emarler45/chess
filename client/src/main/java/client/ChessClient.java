@@ -1,6 +1,6 @@
 package client;
 
-import service.*;
+import model.*;
 import ui.ChessClientOutput;
 import ui.EscapeSequences;
 
