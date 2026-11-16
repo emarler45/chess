@@ -6,12 +6,12 @@ import java.util.Objects;
 
 public class BoardRenderer {
 
-    private final String WHITE_LETTER_BORDER = EscapeSequences.SET_BG_COLOR_LIGHT_GREY +
+    private static final String WHITE_LETTER_BORDER = EscapeSequences.SET_BG_COLOR_LIGHT_GREY +
             EscapeSequences.SET_TEXT_COLOR_LIGHT_GREY + " # " +
             EscapeSequences.SET_TEXT_COLOR_BLACK + " a   b   c  d   e  f   g   h " +
             EscapeSequences.SET_TEXT_COLOR_LIGHT_GREY + " # " +
             EscapeSequences.RESET_BG_COLOR + EscapeSequences.RESET_TEXT_COLOR + "\n";
-    private final String BLACK_LETTER_BORDER = EscapeSequences.SET_BG_COLOR_LIGHT_GREY +
+    private static final String BLACK_LETTER_BORDER = EscapeSequences.SET_BG_COLOR_LIGHT_GREY +
             EscapeSequences.SET_TEXT_COLOR_LIGHT_GREY + " # " +
             EscapeSequences.SET_TEXT_COLOR_BLACK + " h   g   f   e   d   c   b   a  " +
             EscapeSequences.RESET_BG_COLOR + EscapeSequences.RESET_TEXT_COLOR + "\n";

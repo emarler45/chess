@@ -12,7 +12,7 @@ import com.google.gson.Gson;
 
 public class ServerFacade {
 
-    private static final HttpClient userClient = HttpClient.newHttpClient();
+    private static final HttpClient USER_CLIENT = HttpClient.newHttpClient();
     private final String serverUrl;
 
     public ServerFacade(String url){
@@ -102,7 +102,7 @@ public class ServerFacade {
 
     private HttpResponse<String> sendRequest(HttpRequest request){
         try {
-            return userClient.send(request, HttpResponse.BodyHandlers.ofString());
+            return USER_CLIENT.send(request, HttpResponse.BodyHandlers.ofString());
         } catch (Exception e) {
             throw new ResponseException(e.getMessage());
         }

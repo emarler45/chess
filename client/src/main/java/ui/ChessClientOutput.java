@@ -2,34 +2,34 @@ package ui;
 
 public class ChessClientOutput {
 
-    private outKind out;
+    private OutKind out;
 
     public ChessClientOutput(){
-        out = outKind.SYSTEM;
+        out = OutKind.SYSTEM;
     }
 
     public ChessClientOutput(String kind){
         switch (kind){
-            case "System" -> out = outKind.SYSTEM;
-            case "File" -> out = outKind.FILE;
+            case "System" -> out = OutKind.SYSTEM;
+            case "File" -> out = OutKind.FILE;
         }
     }
 
     public void print(String message){
-        if (out == outKind.SYSTEM){
+        if (out == OutKind.SYSTEM){
             System.out.print(message);
         }
     }
 
     public void printline(String message){
-        if (out == outKind.SYSTEM){
+        if (out == OutKind.SYSTEM){
             System.out.println(message);
         }
     }
 
 
 
-    private enum outKind {
+    private enum OutKind {
         SYSTEM,
         FILE
     }
