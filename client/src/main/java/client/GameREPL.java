@@ -36,7 +36,11 @@ public class GameREPL extends Repl {
             String cmd = (tokens.length > 0) ? tokens[0] : "help";
             String[] params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
-                case "board" -> renderer.renderBoard(new ChessBoard().resetBoard(), ChessGame.TeamColor.WHITE);
+                case "board" -> {
+                    ChessBoard board = new ChessBoard();
+                    board.resetBoard();
+                    yield renderer.renderBoard(board, ChessGame.TeamColor.WHITE);
+                }
                 case "help" -> "help commands";
                 case "leave" -> "leave";
                 default -> "Command not recognized";

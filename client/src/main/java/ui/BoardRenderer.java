@@ -23,7 +23,7 @@ public class BoardRenderer {
         int end;
         int step;
         String letterBorder;
-        String currSquareFormat = EscapeSequences.SET_BG_COLOR_WHITE + EscapeSequences.SET_TEXT_COLOR_DARK_GREY;
+        String currSquareFormat = EscapeSequences.SET_BG_COLOR_WHITE + EscapeSequences.SET_TEXT_COLOR_LIGHT_GREY;
         StringBuilder builder = new StringBuilder();
         if (team == ChessGame.TeamColor.WHITE){
             start = 1;
@@ -58,10 +58,10 @@ public class BoardRenderer {
     }
 
     private String flipSquareFormatting(String toFlip){
-        if (Objects.equals(toFlip, EscapeSequences.SET_BG_COLOR_WHITE + EscapeSequences.SET_TEXT_COLOR_DARK_GREY)){
-            return EscapeSequences.SET_BG_COLOR_BLACK + EscapeSequences.SET_TEXT_COLOR_DARK_GREY;
+        if (Objects.equals(toFlip, EscapeSequences.SET_BG_COLOR_WHITE + EscapeSequences.SET_TEXT_COLOR_LIGHT_GREY)){
+            return EscapeSequences.SET_BG_COLOR_BLACK + EscapeSequences.SET_TEXT_COLOR_LIGHT_GREY;
         } else {
-            return EscapeSequences.SET_BG_COLOR_WHITE + EscapeSequences.SET_TEXT_COLOR_DARK_GREY;
+            return EscapeSequences.SET_BG_COLOR_WHITE + EscapeSequences.SET_TEXT_COLOR_LIGHT_GREY;
         }
     }
 
