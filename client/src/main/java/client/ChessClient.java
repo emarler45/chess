@@ -8,7 +8,6 @@ import ui.ChessClientOutput;
 import ui.EscapeSequences;
 
 import java.util.Arrays;
-import java.util.Locale;
 import java.util.Objects;
 import java.util.Scanner;
 
@@ -93,23 +92,30 @@ public class ChessClient {
     private String login(String... params) throws ResponseException{
         try {
             assertLoggedOut();
+            assertParamsPresent(2, params.length);
             LoginResult result = facade.login(params[0], params[1]);
             currState = State.LOGGED_IN;
             this.authToken = result.authToken();
             this.currentUserName = result.username();
             return "Successfully logged in as %s".formatted(result.username());
-        } catch (ArrayIndexOutOfBoundsException e) {
-            throw new ResponseException("Command format: login <username> <password>");
+        } catch (InvalidParametersException e) {
+            throw new ResponseException(e.getMessage() + "login <username> <password>");
         }
     }
 
     private String register(String... params){
-        assertLoggedOut();
-        RegisterResult result = facade.register(params[0], params[1], params[2]);
-        this.authToken = result.authToken();
-        this.currentUserName = result.username();
-        currState = State.LOGGED_IN;
-        return "Successful registered and logged in as %s".formatted(result.username());
+        try {
+            assertLoggedOut();
+            assertParamsPresent(3, params.length);
+            RegisterResult result = facade.register(params[0], params[1], params[2]);
+            this.authToken = result.authToken();
+            this.currentUserName = result.username();
+            currState = State.LOGGED_IN;
+            return "Successful registered and logged in as %s".formatted(result.username());
+        } catch (InvalidParametersException e) {
+            throw new ResponseException(e.getMessage() + "register <username> <password> <email>\n" +
+                    "The email must be valid.");
+        }
     }
 
     private String logout(){
@@ -131,10 +137,14 @@ public class ChessClient {
         assertLoggedIn();
         StringBuilder builder = new StringBuilder();
         ListGamesResult games = facade.listGames(authToken);
-        Gson gson = new Gson();
         builder.append("Available games:\n");
         for (GameInfo info : games.games()){
-            builder.append(gson.toJson(info)).append("\n");
+            String whitePlayer = (info.whiteUsername() == null) ? "" : info.whiteUsername();
+            String blackPlayer = (info.blackUsername() == null) ? "" : info.blackUsername();
+            String game = info.gameName() + "\n\t ID: %d".formatted(info.gameID()) +
+                        "\n\t White Player: " + whitePlayer +
+                        "\n\t Black Player: " + blackPlayer;
+            builder.append(game).append("\n\n");
         }
         return builder.toString();
     }
@@ -142,6 +152,7 @@ public class ChessClient {
     private String joinGame(String... params){
         try {
             assertLoggedIn();
+            assertParamsPresent(2, params.length);
             int gameID = Integer.parseInt(params[0]);
             String playerColor = params[1].toUpperCase();
             facade.joinGame(authToken, gameID, playerColor);
@@ -150,23 +161,35 @@ public class ChessClient {
             return "Successfully joined game %d as %s".formatted(gameID, params[1].toUpperCase());
         } catch (NumberFormatException e) {
             throw new ResponseException("Game ID must be a number!");
-        } catch (ArrayIndexOutOfBoundsException e) {
-            throw new ResponseException("Command format: join <ID> [WHITE|BLACK]");
+        } catch (InvalidParametersException e) {
+            throw new ResponseException(e.getMessage() + "join <ID> [WHITE|BLACK]");
         }
     }
 
     private String watchGame(String... params){
-        assertLoggedIn();
-        int gameID = Integer.parseInt(params[0]);
-        gameREPL = new GameREPL(out, facade, null);
-        currState = State.IN_GAME;
-        return "Observing game %d".formatted(gameID);
+        try {
+            assertLoggedIn();
+            assertParamsPresent(1, params.length);
+            int gameID = Integer.parseInt(params[0]);
+            gameREPL = new GameREPL(out, facade, null);
+            currState = State.IN_GAME;
+            return "Observing game %d".formatted(gameID);
+        } catch (InvalidParametersException e) {
+            throw new ResponseException(e.getMessage() + "observe <ID>");
+        } catch (NumberFormatException e) {
+            throw new ResponseException("Game ID must be a number!");
+        }
     }
 
     private String createGame(String... params){
-        assertLoggedIn();
-        CreateGameResult result = facade.createGame(authToken, params[0]);
-        return "Successfully created game %s with ID %d".formatted(params[0], result.gameID());
+        try {
+            assertLoggedIn();
+            assertParamsPresent(1, params.length);
+            CreateGameResult result = facade.createGame(authToken, params[0]);
+            return "Successfully created game %s with ID %d".formatted(params[0], result.gameID());
+        } catch (InvalidParametersException e){
+            throw new ResponseException(e.getMessage() + "create <name>");
+        }
     }
 
     public String help(){
@@ -215,6 +238,12 @@ public class ChessClient {
     private void assertLoggedOut(){
         if (isLoggedIn()){
             throw new ResponseException("You are already logged in!");
+        }
+    }
+
+    private void assertParamsPresent(int exp, int actual){
+        if (actual < exp){
+            throw new InvalidParametersException("Command format: ");
         }
     }
 
